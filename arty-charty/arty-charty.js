@@ -318,7 +318,7 @@ makeMarkers(markerCords, chartIdx) {
 
 makeMarker(cx, cy, chartIdx, pointIdx) {
     return (
-      <AmimatedCirclesMarker key={pointIdx} cx={cx} cy={cy} baseColor={this.props.data[chartIdx].lineColor}
+      <AmimatedCirclesMarker key={pointIdx} cx={cx} cy={cy} baseColor={this.props.data[chartIdx].lineColor || 'rgba(0,0,0,.5)'}
        active={this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === pointIdx} />
     );
   }
