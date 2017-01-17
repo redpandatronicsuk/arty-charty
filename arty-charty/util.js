@@ -363,12 +363,13 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
    function makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, makeArea) {
     let heightScaler = (chartHeight-markerRadius)/maxValue;
     let xSpacing = width / pointsOnScreen;
-    let fullWidth = xSpacing*(chart.data.length-1) + markerRadius;
+    let centeriser = xSpacing / 2 - markerRadius;
+    let fullWidth = xSpacing*(chart.data.length-1) + markerRadius + centeriser;
 
     let lineStrArray = makeArea ? ['M' + markerRadius, chartHeight+chartHeightOffset] : [];
     let xCord;
     chart.data.some((d, idx) => {
-    let spacing = idx*xSpacing;
+    let spacing = idx*xSpacing + centeriser;
         if (spacing > fullWidth * t && chart.drawChart) {
           return true;
         }
@@ -415,13 +416,14 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
   function makeSplineChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, closePath) {
     let heightScaler = (chartHeight-markerRadius)/maxValue;
     let xSpacing = width / pointsOnScreen;
-    let fullWidth = xSpacing*(chart.data.length-1) + markerRadius;
+    let centeriser = xSpacing / 2 - markerRadius;
+    let fullWidth = xSpacing*(chart.data.length-1) + markerRadius + centeriser;
 
     let xCord;
     let xCords = [];
     let yCords = [];
     chart.data.forEach((d, idx) => {
-        let spacing = idx*xSpacing;
+        let spacing = idx*xSpacing + centeriser;
         if (spacing > fullWidth * t && chart.drawChart) {
           return true;
         }

@@ -298,9 +298,10 @@ makeMarkersCoords(chart, width, t) {
   let yCord;
   let heightScaler = (CHART_HEIGHT-MARKER_RADIUS)/this.maxValue;
   let xSpacing = width / this.pointsOnScreen;
-  let fullWidth = xSpacing*(chart.data.length-1);
+  let centeriser = xSpacing / 2 - MARKER_RADIUS;
+  let fullWidth = xSpacing*(chart.data.length-1) + centeriser;
   chart.data.forEach((d,idx) => {
-    let spacing = idx*xSpacing;
+    let spacing = idx*xSpacing + centeriser;
     if (spacing > fullWidth * t && chart.drawChart) {
           return true;
         }
