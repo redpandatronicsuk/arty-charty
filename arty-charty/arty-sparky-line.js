@@ -18,8 +18,8 @@ class ArtySparkyLine extends Component {
   _computeChartConstants() {
     this.maxValue = Number.MIN_VALUE;
     this.props.data.forEach(d => {
-      if (d.value > this.maxValue) {
-          this.maxValue = d.value;
+      if (d > this.maxValue) {
+          this.maxValue = d;
       }
     });
   }
@@ -38,7 +38,7 @@ class ArtySparkyLine extends Component {
     this.props.data.forEach((d, idx) => {
         let xCord = idx*xSpacing;
         lineStrArray.push((idx ? 'L' : 'M') + xCord);
-        let yCord = this.props.height - d.value * heightScaler;
+        let yCord = this.props.height - d * heightScaler;
         lineStrArray.push(yCord);
     });
     return lineStrArray.join(' ');

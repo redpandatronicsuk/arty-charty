@@ -29,7 +29,7 @@ class ArtySparkyPie extends Component {
     this.slices = [];
     let startAngle = 0;
     this.props.data.data.forEach((d, idx) => {
-      let arcLength = d.value/this.sum*360;
+      let arcLength = d/this.sum*360;
       let endAngle = startAngle + arcLength;
       let rad = (startAngle + arcLength/2) * Math.PI / 180;
       let vector = {x: Math.sin(rad), y: -Math.cos(rad)};
@@ -44,7 +44,7 @@ class ArtySparkyPie extends Component {
 
   _computeSum() {
     return this.props.data.data.reduce((a,b) => { 
-      return a + b.value;
+      return a + b;
     },0);
   }
 
