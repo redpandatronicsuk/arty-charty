@@ -33,8 +33,6 @@ const SHOW_CLICKS = false;
 const CHART_GROW_ANIMATION_DURATION = 2000;
 const CLICK_FEDDBACK_ANIMATION_DURATION = 500;
 
-const POINTS_ON_SCREEN = 8;
-
 const CHART_HEIGHT = 250;
 const CHART_HEIGHT_OFFSET = CHART_HEIGHT / 2;
 
@@ -108,6 +106,7 @@ class ArtyCharty extends Component {
   }
 
   computeChartConstants() {
+    let maxDataPoints = 0;
     this.maxValue = Number.MIN_VALUE;
     this.minValue = Number.MAX_VALUE;
     this.props.data.forEach(d => {
@@ -116,7 +115,11 @@ class ArtyCharty extends Component {
       d.minValue = val.minValue;
       this.maxValue = Math.max(this.maxValue, val.maxValue);
       this.minValue = Math.min(this.minValue, val.minValue);
+      maxDataPoints = Math.max(maxDataPoints, d.data.length);
     });
+    // If points on screen parameter is not provided, find chart
+    // with most datapoints and use that instead:
+    this.pointsOnScreen = this.props.pointsOnScreen ? this.props.pointsOnScreen : maxDataPoints;
   }
 
   initChartGrowAnimations() {
@@ -292,7 +295,7 @@ makeMarkersCoords(chart, width, t) {
   let xCord;
   let yCord;
   let heightScaler = (CHART_HEIGHT-MARKER_RADIUS)/this.maxValue;
-  let xSpacing = width / (this.props.pointsOnScreen || POINTS_ON_SCREEN);
+  let xSpacing = width / this.pointsOnScreen;
   let fullWidth = xSpacing*(chart.data.length-1);
   chart.data.forEach((d,idx) => {
     let spacing = idx*xSpacing;
@@ -369,8 +372,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
        let makeMarkers = true;
        switch (chart.type) {
          case 'area':
-            chartData = makeAreaChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS,
-           this.props.pointsOnScreen || POINTS_ON_SCREEN);
+            chartData = makeAreaChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
             // Max assumes chart doesn't shrink subsequently. If that is the case,weneed to
             // recomputmax for all!!
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
@@ -382,8 +384,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
               break;
             }
           case 'line':
-            chartData = makeLineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS,
-           this.props.pointsOnScreen || POINTS_ON_SCREEN);
+            chartData = makeLineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             charts.push(<Shape
                   key={idx + 10000} 
@@ -396,8 +397,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             charts.push(this.makeMarkers(markerCords, idx));
             break;
           case 'spline-area':
-            chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS,
-            this.props.pointsOnScreen || POINTS_ON_SCREEN, true);
+            chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, true);
               charts.push(<Shape
                   key={idx + 30000} 
                   d={chartData.path}
@@ -413,8 +413,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
               break;
             }
           case 'spline':
-            chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS,
-            this.props.pointsOnScreen || POINTS_ON_SCREEN, false);
+            chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, false);
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             charts.push(<Shape
                   key={idx + 10000} 
@@ -430,8 +429,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             }
             break;
           case 'bars':
-          chartData = makeBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS,
-           this.props.pointsOnScreen || POINTS_ON_SCREEN, PAD_LEFT);
+          chartData = makeBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT);
             chart.barCords = chartData.barCords;
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             charts.push(<Shape
