@@ -258,7 +258,9 @@ componentWillReceiveProps(nextProps) {
   onMarkerClick(chartIdx, pointIdx) {
     if (chartIdx !== this.state.activeMarker.chartIdx || pointIdx !== this.state.activeMarker.pointIdx) {
         this.setState(Object.assign(this.state, {activeMarker: {chartIdx, pointIdx}}));
-        this.props.onMarkerClick(chartIdx, pointIdx);
+        if (this.props.onMarkerClick) {
+          this.props.onMarkerClick(chartIdx, pointIdx);
+        }
     }
   }
 
