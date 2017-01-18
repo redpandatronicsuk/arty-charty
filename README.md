@@ -22,9 +22,9 @@ For more advanced usage have a look at the demo app [here](https://github.com/re
 The *ArtyCharty* component is used to display *line*, *spline*, *area*, *area-spline* and *bars* charts. Charts can be stacked on top of each other by passing in an array of charts. Each chart object in the array needs to specify the kind of chart it is (*line*, *spline*, *area*, *area-spline* or *bars*) and an array of data points, where each data point needs to have a *value* field, which will be used as the value on the Y axis.
 #### Simple line chart example
 ![Simple line chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/simple-line-chart.png)
-```
+```javascript
 import { ArtyCharty } from 'arty-charty';
-...
+...js
 <ArtyCharty data={[{
           type: 'line',
           data: [{value: 2}, {value: 3}, {value: 1}]
@@ -32,7 +32,7 @@ import { ArtyCharty } from 'arty-charty';
 ```
 #### Stacked charts
 ![Stacked charts](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/stacked-charts.png)
-```
+```javascript
 import { ArtyCharty } from 'arty-charty';
 ...
 <ArtyCharty 
@@ -64,7 +64,7 @@ import { ArtyCharty } from 'arty-charty';
 #### Stacked charts with animation and Y-axis ticks
 This is the same data as before with animations and selectable line markers and bars enabled.
 ![Stacked charts](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/stacked-charts.mov-10-320.gif)
-```
+```javascript
 import { ArtyCharty } from 'arty-charty';
 ...
 <ArtyCharty 
@@ -126,7 +126,7 @@ The fill color used for the bar or area chart for a specific point will be the i
 
 ### ArtyChartyPie
 ![Pie chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/pie.mov-10-320.gif)
-```
+```javascript
 import { ArtyChartyPie } from 'arty-charty';
 ...
 <ArtyChartyPie 
@@ -150,7 +150,7 @@ import { ArtyChartyPie } from 'arty-charty';
 
 ### ArtyChartyDonut
 ![Stacked donut chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/donut.mov-10-320.gif)
-```
+```javascript
 <ArtyChartyDonut
     style={{overflow: 'visible'}}
         data={{
@@ -183,7 +183,7 @@ For the line and pie chart there is also a [spark](https://en.wikipedia.org/wiki
 
 #### ArtySparkyLine
 ![ArtySparkyLine](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/sparky-line.png)
-```
+```javascript
 <ArtySparkyLine 
     data={Array.from(Array(50)).map(Math.random)}
     color="fuchsia"
