@@ -1,6 +1,9 @@
 # ARTy Charty
 React Native plugin for rendering charts using ART
 
+## About
+The goal of Arty Charty is to produce animated, interactive, performant charts. It uses React Native ART to render the charts. Arty Charty does not rely on 3rd party libraries, such as D3, to produce the charts. This keeps the size of the library small (<80kb uncompressed and not-minified) and chart generating functions can be optimised for speed.
+
 ## Installation
 `npm i --save arty-charty`
 
@@ -252,9 +255,12 @@ For the line and pie chart there is also a [spark](https://en.wikipedia.org/wiki
 #### ArtySparkyPie
 ![ArtySparkyPie](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/sparky-pie.png)
 
+## Contributing
+If you find bugs or have any suggestions, please open an issue. Pull requests are also welcome. All charts are rendered as SVG paths, have a look at this [CodePen](http://codepen.io/dobe/pen/JKLqaq) if you want to get more familiar with SVG paths and how we use them to generate charts.
+
 ### TO-DO:
 - Better documentation
 - Add more parameters: [markerRadius, selectedMarkerRadii, markerColor, selectedMarkerColors, yAxis stuff, xAxis, animation stuff] and imporve parameter names
-- More chart types [bubble, area-range, bar-range, scatter, line-step, stacked-columns, candlestick]
+- More chart types [area-range, bar-range, line-step, stacked-columns, candlestick]
 - Nicer animations for adding/removing data points from the chart
 - Editable/draggable points with onValueChange callback function
