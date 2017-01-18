@@ -1,4 +1,5 @@
 export { default as ArtyCharty } from './arty-charty';
+export { default as ArtyChartyXY } from './arty-charty-xy';
 export { default as AmimatedCirclesMarker } from './animated-circles-marker';
 export { default as ArtyChartyDonut } from './arty-charty-donut';
 export { default as ArtyChartyPie } from './arty-charty-pie';

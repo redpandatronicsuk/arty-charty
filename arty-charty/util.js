@@ -777,6 +777,33 @@ function getMinMaxValues(arr) {
       return {maxValue, minValue};
   }
 
+   /**
+ * Find minimum and maximum X and Y values in an array of
+ * XY coordinate objects
+ */
+function getMinMaxValuesXY(arr) {
+    let maxValueX = Number.MIN_VALUE;
+    let maxValueY = Number.MIN_VALUE;
+    let minValueX = Number.MAX_VALUE;
+    let minValueY = Number.MAX_VALUE;
+    arr
+      .forEach((d) => {
+        if (d.x > maxValueX) {
+          maxValueX = d.x;
+        }
+        if (d.x < minValueX) {
+          minValueX = d.x;
+        }
+        if (d.y > maxValueY) {
+          maxValueY = d.y;
+        }
+        if (d.y < minValueY) {
+          minValueY = d.y;
+        }
+      });
+      return {maxValueX, minValueX, maxValueY, minValueY};
+  }
+
   function  computeChartSum(chart) {
     return chart.data.reduce((a,b) => { 
       return a + b.value;
@@ -838,6 +865,7 @@ export {
   makeCircle,
   makeSpline,
   getMinMaxValues,
+  getMinMaxValuesXY,
   computeChartSum,
   findRectangleIndexContainingPoint,
   findClosestPointIndexWithinRadius,
