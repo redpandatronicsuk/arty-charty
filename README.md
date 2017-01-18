@@ -229,6 +229,7 @@ ArtyChartyXY is used to plot data on a X-Y axis, such as scatter and bubble char
 ```
 ##### Data objects
 Same as for scatter with additionally:
+
 | Property | Type | Description |
 | -------- |:----:| :-----------|
 `value` | **number** | Value, used to determine the radius of the bubble.
