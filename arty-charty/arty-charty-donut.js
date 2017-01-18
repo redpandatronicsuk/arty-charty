@@ -90,9 +90,9 @@ class ArtyChartyDonut extends Component {
 
   _computeChartData() {
     this.maxR = 0;
-    if (this.props.data.stackInnerRadius && this.props.data.stackOutterRadius) {
+    if (this.props.data.stackInnerRadius && this.props.data.stackouterRadius) {
       let gap = this.props.data.gap || 0;
-      this.strokeWidth = ((this.props.data.stackOutterRadius - this.props.data.stackInnerRadius)
+      this.strokeWidth = ((this.props.data.stackouterRadius - this.props.data.stackInnerRadius)
       / this.props.data.data.length) - gap;
       this.props.data.data.forEach((d, idx) => {
         // Only set radius if not explictly set:
