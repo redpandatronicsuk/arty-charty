@@ -178,6 +178,61 @@ import { ArtyChartyPie } from 'arty-charty';
 `color` | **string** | Color of the slice
 `value` | **number** | Value
 
+### ArtyChartyXY
+ArtyChartyXY is used to plot data on a X-Y axis, such as scatter and bubble charts.
+#### Parameters
+
+| Parameter | Type | Description |
+| --------- |:----:| :-----------|
+`type` | **string** | The type of X-Y chart, either *scatter* or *bubble*.
+`data` | **array** | Array of data objects.
+`animated` | **boolean** | If set to true the chart will be animated.
+`width` | **number** | The width of the chart.
+`height` | **number** | The height of the chart.
+`showGrid` | **boolean** | If set to true the grid will be shown.
+`pointRadius` | **number** | The point radius for scatter charts **only**, for bubble charts, the bubble's radius is determined by its value
+`color` | **string** | The color of the points or bubble, *note*: point colors can also be set individually, see below.
+`onPointClick(clickedPointIdx)` | **function** | Callback function when a point is clicked with the index of the clicked point as the functions argument.
+
+#### Scatter
+![Scatter chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/scatter.png)
+```javascript
+<ArtyChartyXY 
+    showGrid={true} 
+    type="scatter"
+    pointRadius={3} 
+    data={Array.from(Array(20)).map(()=> {
+        return {x: Math.random()*20, y: Math.random()* 10
+        }})}/>
+```
+##### Data objects
+| Property | Type | Description |
+| -------- |:----:| :-----------|
+`x` | **number** | X coordinate of the point
+`y` | **number** | Y coordinate of the point
+`color` | **string** | Color of the slice
+`value` | **number** | Value
+
+#### Bubble 
+![Bubble chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/bubble.mov-10-320.gif)
+```javascript
+<ArtyChartyXY 
+    type="bubble" 
+    animated={true} 
+    data={Array.from(Array(20)).map(()=> { 
+    return {
+        x: Math.random()*20, 
+        y: Math.random()* 10, 
+        value: Math.random()* 20, 
+        color: `rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)}, .5)` }
+    })}/>
+```
+##### Data objects
+Same as for scatter with additionally:
+| Property | Type | Description |
+| -------- |:----:| :-----------|
+`value` | **number** | Value, used to determine the radius of the bubble.
+
 
 ### ArtySparky
 For the line and pie chart there is also a [spark](https://en.wikipedia.org/wiki/Sparkline) (inline chart) component, which are light-weight versions of their full chart components. Axes, animations, click interactions have been removed and the ability to stack charts.
