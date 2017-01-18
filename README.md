@@ -113,13 +113,14 @@ import { ArtyCharty } from 'arty-charty';
 
 ##### Chart object
 The `data` parameter for the ArtyCharty component is an array of chart objects, with the following options:
+
 | Property | Type | Description |
 | -------- |:----:| :-----------|
 `type` | **string** | The type of the chart to render, available types: line, spline, area, area-spline, bars |
 `data` | ***array** | Array containing the data points of the chart. Each datapoint needs to have the value property set, e.g. [{value: 3}, {value: 5}] |
 `drawChart` | **boolean** | If set to true the chart will be animated from left to right. |
 `lineColor` | **string** | The color of the line for line charts or the border color for the bar chart. |
-*Area and bar chart only* |
+*Area and bar chart only* | | |
 `highCol` | **string** | The fill color for high values |
 `lowCol` | **string** | The fill color for low values |
 The fill color used for the bar or area chart for a specific point will be the interpolation between the high and low value. E.g. if highCol is set to red and lowCol to green, then the bar with the highest value will have a red fill and the one with the lowest value will have a green fill.
