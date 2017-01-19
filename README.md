@@ -103,6 +103,78 @@ import { ArtyCharty } from 'arty-charty';
         ]}/>
 ```
 
+#### Area-range chart
+![Area-range chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/area-range.mov-10-320.gif)
+```javascript
+ <ArtyCharty
+    clickFeedback={true}
+    interactive={true}
+    animated={true}
+    data={[{
+        type: 'area-range',
+        lineColor: 'rgba(255,0,0,.5)',
+        highCol: 'rgb(255,0,0)',
+        lowCol: 'rgb(255,165,0)',
+        drawChart: true,
+        data: Array.from(Array(20)).map(() => {
+        let rand = Math.random() + 2;
+        return {value: rand, valueLow: rand - Math.random() - .5};
+        })}
+        ]} />
+```
+
+#### Candlestick chart
+![Candlestick chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/candlestick.mov-10-320.gif)
+```javascript
+ <ArtyCharty
+    clickFeedback={true}
+    interactive={true}
+    animated={true}
+    data={[{
+        type: 'candlestick',
+        lineColor: 'fuchsia',
+        fillUp:  'orange',
+        fillDown: 'rgba(0,0,0,0)',
+        drawChart: true,
+        data: Array.from(Array(20)).map(() => {
+            let rand = Math.random() + 2, open, close, low, high;
+            if (Math.random() > .5) {
+            open = rand + Math.random();
+            high = open + Math.random();
+            close = rand - Math.random();
+            low = close - Math.random();
+            } else {
+            open = rand - Math.random();
+            low = open - Math.random();
+            close = rand + Math.random();
+            high = close + Math.random();
+            }
+            return {open, close, low, high};
+        })},
+        {
+        type: 'candlestick',
+        lineColor: 'blue',
+        fillUp:  'green',
+        fillDown: 'red',
+        drawChart: true,
+        data: Array.from(Array(20)).map(() => {
+            let rand = Math.random() + 7, open, close, low, high;
+            if (Math.random() > .5) {
+            open = rand + Math.random();
+            high = open + Math.random();
+            close = rand - Math.random();
+            low = close - Math.random();
+            } else {
+            open = rand - Math.random();
+            low = open - Math.random();
+            close = rand + Math.random();
+            high = close + Math.random();
+            }
+            return {open, close, low, high};
+        })}
+        ]} />
+```
+
 #### Parameters
 ##### ArtyCharty component parameters
 | Parameter | Type | Description |
@@ -120,13 +192,19 @@ The `data` parameter for the ArtyCharty component is an array of chart objects, 
 | Property | Type | Description |
 | -------- |:----:| :-----------|
 `type` | **string** | The type of the chart to render, available types: line, spline, area, area-spline, bars |
-`data` | ***array** | Array containing the data points of the chart. Each datapoint needs to have the value property set, e.g. [{value: 3}, {value: 5}] |
+`data` | ***array** |  Array containing the data points of the chart. See table 'Data object' below for what the objects in this array should look like for the diferent chart types. |
 `drawChart` | **boolean** | If set to true the chart will be animated from left to right. |
 `lineColor` | **string** | The color of the line for line charts or the border color for the bar chart. |
 *Area and bar chart only* | | |
 `highCol` | **string** | The fill color for high values |
 `lowCol` | **string** | The fill color for low values |
 The fill color used for the bar or area chart for a specific point will be the interpolation between the high and low value. E.g. if highCol is set to red and lowCol to green, then the bar with the highest value will have a red fill and the one with the lowest value will have a green fill.
+###### Data object
+| Chart type | Description |
+| ---------- | :---------- |
+| `line`, `spline`, `area`, `spline-area` |  {value: **number**} |
+| `area-range` |  {value: **number**, valueLow: **number**} |
+| `candlestick` |  {open: **number**, close: **number**, low: **number**, high: **number**} |
 
 ### ArtyChartyPie
 ![Pie chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/pie.mov-10-320.gif)
@@ -261,6 +339,6 @@ If you find bugs or have any suggestions, please open an issue. Pull requests ar
 ### TO-DO:
 - Better documentation
 - Add more parameters: [markerRadius, selectedMarkerRadii, markerColor, selectedMarkerColors, yAxis stuff, xAxis, animation stuff] and imporve parameter names
-- More chart types [area-range, bar-range, line-step, stacked-columns, candlestick]
+- More chart types [bar-range, line-step, stacked-columns]
 - Nicer animations for adding/removing data points from the chart
 - Editable/draggable points with onValueChange callback function
