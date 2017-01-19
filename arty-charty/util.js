@@ -395,14 +395,18 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
    * Wrapper function for makeLineOrAreaChartPath to make a line chart.
    */
   function makeAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen) {
-    return makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, true);
+    return makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, true, false);
+  }
+
+  function makeAreaRangeChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen) {
+    return makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, true, true);
   }
 
   /**
    * Wrapper function for makeLineOrAreaChartPath to make an area chart.
    */
   function makeLineChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen) {
-    return makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, false);
+    return makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, false, false);
   }
 
   /**
@@ -426,14 +430,20 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
    * @param  {boolean} makeArea          Wether to close the line (make it an
    *                                     area chart) or not.
    */
-   function makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, makeArea) {
+   function makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, makeArea, isRange) {
     let heightScaler = (chartHeight-markerRadius)/maxValue;
     let xSpacing = width / pointsOnScreen;
     let centeriser = xSpacing / 2 - markerRadius;
     let fullWidth = xSpacing*(chart.data.length-1) + markerRadius + centeriser;
 
-    let lineStrArray = makeArea ? ['M' + markerRadius, chartHeight+chartHeightOffset] : [];
+    let lineStrArray = makeArea && !isRange ? ['M' + markerRadius, chartHeight+chartHeightOffset] : [];
+    if (isRange) {
+      lineStrArray.push('M');
+      lineStrArray.push(makeXcord(chart, fullWidth, t, centeriser, markerRadius));
+      lineStrArray.push((chartHeight+chartHeightOffset) - chart.data[0].value * heightScaler  * (chart.timingFunctions ? chart.timingFunctions[0 % chart.timingFunctions.length](t) : 1)); 
+    }
     let xCord;
+    let lowCords = [];
     chart.data.some((d, idx) => {
     let spacing = idx*xSpacing + centeriser;
         if (spacing > fullWidth * t && chart.drawChart) {
@@ -445,11 +455,25 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
         // And y-cordinate:
         let yCord = (chartHeight+chartHeightOffset) - d.value * heightScaler  * (chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1);
         lineStrArray.push(yCord);
+        if (isRange) {
+          let yCordLow = (chartHeight+chartHeightOffset) - d.valueLow * heightScaler  * (chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1);
+          lowCords.unshift({xCord, yCordLow});
+        }
     });
     if (makeArea) {
-      lineStrArray.push('L' + xCord);
-      lineStrArray.push(chartHeight+chartHeightOffset);
+      if (isRange) {
+        lowCords.forEach((d) => {
+          lineStrArray.push('L' + d.xCord);
+          lineStrArray.push(d.yCordLow);
+        });
+        // lineStrArray.push('L' + makeXcord(chart, fullWidth, t, xSpacing + centeriser, markerRadius));
+        // lineStrArray.push(d.yCordLow);
+      } else {
+        lineStrArray.push('L' + xCord);
+        lineStrArray.push(chartHeight + chartHeightOffset);
+      }
       lineStrArray.push('Z');
+      console.log(lineStrArray.join(' '));
     }
     return {
       path: lineStrArray.join(' '),
@@ -844,6 +868,24 @@ function getMinMaxValues(arr) {
   }
 
   /**
+ * Find minimum and maximum value in an array of numbers
+ */
+function getMinMaxValuesRange(arr) {
+    let maxValue = Number.MIN_VALUE;
+    let minValue = Number.MAX_VALUE;
+    arr
+      .forEach((d) => {
+        if (d.value > maxValue) {
+          maxValue = d.value;
+        }
+        if (d.valueLow < minValue) {
+          minValue = d.valueLow;
+        }
+      });
+      return {maxValue, minValue};
+  }
+
+  /**
  * Find minimum and maximum X and Y values in an array of
  * XY coordinate objects
  */
@@ -951,6 +993,7 @@ export {
   getMinMaxValues,
   getMinMaxValuesXY,
   getMinMaxValuesCandlestick,
+  getMinMaxValuesRange,
   computeChartSum,
   findRectangleIndexContainingPoint,
   findClosestPointIndexWithinRadius,
@@ -958,5 +1001,6 @@ export {
   makeAreaChartPath,
   makeLineChartPath,
   makeSplineChartPath,
-  makeCandlestickChart
+  makeCandlestickChart,
+  makeAreaRangeChartPath
  }

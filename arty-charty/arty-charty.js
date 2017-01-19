@@ -12,7 +12,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 const {Surface, Group, Shape, LinearGradient} = ART;
-import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius} from '.';
+import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
 
 const SELCTED_MARKER_ANIMATION_DURATION = 1000;
@@ -109,7 +109,14 @@ class ArtyCharty extends Component {
     this.maxValue = Number.MIN_VALUE;
     this.minValue = Number.MAX_VALUE;
     this.props.data.forEach(d => {
-      let val = d.type === 'candlestick' ? getMinMaxValuesCandlestick(d.data) : getMinMaxValues(d.data);
+      let val;
+      if (d.type === 'candlestick') {
+        val = getMinMaxValuesCandlestick(d.data)
+      } else if (d.type === 'area-range') {
+        val = getMinMaxValuesRange(d.data);
+      } else {
+        val = getMinMaxValues(d.data);
+      }
       d.maxValue = val.maxValue;
       d.minValue = val.minValue;
       this.maxValue = Math.max(this.maxValue, val.maxValue);
@@ -207,7 +214,7 @@ class ArtyCharty extends Component {
                 this.animateClickFeedback(tmpX - px, tmpY - py + CHART_HEIGHT / 2);
               }
               this.props.data.some((d, idx) => {
-                if (d.type === 'area' || d.type === 'line' || d.type.substr(0, 6) === 'spline') {
+                if (d.type.slice(0,4) === 'area' || d.type === 'line' || d.type.substr(0, 6) === 'spline') {
                   let closestMarker = findClosestPointIndexWithinRadius(d.markerCords, tmpX - px, tmpY - py + CHART_HEIGHT / 2, MARKER_RADIUS_SQUARED);
                   if (closestMarker !== undefined) {
                     this.onMarkerClick(idx, closestMarker);
@@ -274,7 +281,7 @@ componentWillReceiveProps(nextProps) {
 
   makeChartFillColors() {
     this.props.data.forEach(chart => {
-      if (chart.type === 'bars' || chart.type.slice(-4) === 'area') {
+      if (chart.type === 'bars' || chart.type.slice(-4) === 'area' || chart.type.slice(0,4) === 'area') {
         chart.data.forEach(d => {
            d.fillColors = {
             active: inerpolateColorsFixedAlpha(chart.highCol || chart.lineColor || 'white',
@@ -294,7 +301,8 @@ componentWillReceiveProps(nextProps) {
     this.props
       .data[chartIdx].data
       .forEach((d, idx) => {
-        let color = this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === idx ? d.fillColors.active : d.fillColors.inactive;
+        let fillColors = d.fillColors ? d.fillColors : {active: 'white', inactive: 'gray'};
+        let color = this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === idx ? fillColors.active : fillColors.inactive;
         gradStops[(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length)] = color;
       });
       return gradStops;
@@ -381,6 +389,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
        let charts = [];
        let markerCords;
        let makeMarkers = true;
+       let doBreak = false;
        switch (chart.type) {
          case 'area':
             chartData = makeAreaChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
@@ -393,6 +402,18 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             />);
             if (chart.hideLine) {
               break;
+            }
+            doBreak = true;
+          case 'area-range':
+            if (!doBreak) {
+              chartData = makeAreaRangeChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
+            this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
+            charts.push(<Shape key={idx} d={chartData.path}
+              fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)}
+            />);
+            if (chart.hideLine) {
+              break;
+            }
             }
           case 'line':
             chartData = makeLineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
