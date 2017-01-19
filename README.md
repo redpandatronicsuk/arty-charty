@@ -103,6 +103,24 @@ import { ArtyCharty } from 'arty-charty';
         ]}/>
 ```
 
+#### Step chart
+![Step chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/step.mov-10-320.gif)
+```javascript
+<ArtyCharty
+    interactive={true}
+    animated={true}
+    pointsOnScreen={20}
+    data={[{
+        type: 'step',
+        lineColor: 'fuchsia',
+        drawChart: true,
+        data: Array.from(Array(40)).map(() => {
+        let rand = Math.random() + 2;
+        return {value: rand, valueLow: rand - Math.random() - .5};
+        })}
+        ]} />
+```
+
 #### Area-range chart
 ![Area-range chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/area-range.mov-10-320.gif)
 ```javascript
@@ -339,6 +357,6 @@ If you find bugs or have any suggestions, please open an issue. Pull requests ar
 ### TO-DO:
 - Better documentation
 - Add more parameters: [markerRadius, selectedMarkerRadii, markerColor, selectedMarkerColors, yAxis stuff, xAxis, animation stuff] and imporve parameter names
-- More chart types [bar-range, line-step, stacked-columns]
+- More chart types [bar-range, stacked-columns]
 - Nicer animations for adding/removing data points from the chart
 - Editable/draggable points with onValueChange callback function
