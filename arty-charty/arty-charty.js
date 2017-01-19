@@ -12,7 +12,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 const {Surface, Group, Shape, LinearGradient} = ART;
-import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius} from '.';
+import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
 
 const SELCTED_MARKER_ANIMATION_DURATION = 1000;
@@ -42,7 +42,6 @@ class ArtyCharty extends Component {
   constructor(props) {
     super(props);
     this.resetState();
-    console.log('complement', complement('rgba(255,0,0)'));
   }
 
   resetState () {
@@ -110,7 +109,7 @@ class ArtyCharty extends Component {
     this.maxValue = Number.MIN_VALUE;
     this.minValue = Number.MAX_VALUE;
     this.props.data.forEach(d => {
-      let val = getMinMaxValues(d.data);
+      let val = d.type === 'candlestick' ? getMinMaxValuesCandlestick(d.data) : getMinMaxValues(d.data);
       d.maxValue = val.maxValue;
       d.minValue = val.minValue;
       this.maxValue = Math.max(this.maxValue, val.maxValue);
@@ -223,6 +222,15 @@ class ArtyCharty extends Component {
                       return true;
                     }
                   }
+                } else if (d.type === 'candlestick') {
+                  let clickedCandlestick = findRectangleIndexContainingPoint(d.barCords, tmpX - px, tmpY - py + CHART_HEIGHT / 2);
+                  if (clickedCandlestick !== undefined) {
+                    this.onMarkerClick(idx, clickedCandlestick);
+                    // Only return true if this is the last chart, there might be line charts infront..
+                    if (idx === this.props.data.length-1) {
+                      return true;
+                    }
+                  }
                 }
               });
             });
@@ -269,11 +277,11 @@ componentWillReceiveProps(nextProps) {
       if (chart.type === 'bars' || chart.type.slice(-4) === 'area') {
         chart.data.forEach(d => {
            d.fillColors = {
-            active: inerpolateColorsFixedAlpha(chart.highCol || chart.lineColor,
-                                                  chart.lowCol || chart.lineColor,
+            active: inerpolateColorsFixedAlpha(chart.highCol || chart.lineColor || 'white',
+                                                  chart.lowCol || chart.lineColor || 'white',
                                                   d.value/this.maxValue, 1),
-            inactive: inerpolateColorsFixedAlpha(chart.highCol || chart.lineColor,
-                                                  chart.lowCol || chart.lineColor,
+            inactive: inerpolateColorsFixedAlpha(chart.highCol || chart.lineColor || 'white',
+                                                  chart.lowCol || chart.lineColor || 'white',
                                                   d.value/this.maxValue, .5)
           };
         });
@@ -441,6 +449,18 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
                   strokeWidth={3}
                   fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)} />);
+                  break;
+          case 'candlestick':
+          chartData = makeCandlestickChart(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT);
+          chart.barCords = chartData.barCords;
+          chartData.paths.forEach((d, idx2) => {
+            charts.push(<Shape
+                  key={idx2 + 80000} 
+                  d={d.pathStr}
+                  stroke={chart.lineColor}
+                  strokeWidth={idx === this.state.activeMarker.chartIdx && idx2 === this.state.activeMarker.pointIdx ? 3 : 1}
+                  fill={d.openHigherThanClose ? chart.fillDown : chart.fillUp} />);
+          });
        }
        return charts;
      });

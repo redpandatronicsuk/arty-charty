@@ -311,6 +311,72 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
     };
   }
 
+  function makeCandlestickChart(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, paddingLeft) {
+    let heightScaler = (chartHeight-markerRadius)/maxValue;
+    let xSpacing = width / pointsOnScreen;
+    let barWidth = xSpacing - paddingLeft;
+    let fullWidth = paddingLeft/2 + (paddingLeft+barWidth) * (chart.data.length-1) + barWidth;
+    let paths = [];
+    let barCords = [];
+    chart.data.some((d, idx) => {
+        let candle = makeCandlestickPath(d, idx, chart, t, heightScaler, barWidth, fullWidth, chartHeight, chartHeightOffset, paddingLeft);
+        paths.push(candle);
+        barCords.push(candle.barCords);
+    });
+    return {
+      paths: paths,
+      width: fullWidth,
+      maxScroll: fullWidth - width,
+      barCords: barCords
+    };
+  }
+
+  function makeCandlestickPath(d, idx, chart, t, heightScaler, barWidth, fullWidth, chartHeight, chartHeightOffset, paddingLeft) {
+        let x1 = paddingLeft/2 + (paddingLeft+barWidth) * idx;
+        let openHigherThanClose = d.open > d.close;
+        let pathStr = [];
+        let top = openHigherThanClose ? d.open : d.close;
+        let bottom = openHigherThanClose ? d.close : d.open;
+        let tScaled = chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1;
+        if (x1 > fullWidth * t && chart.drawChart) {
+          return true;
+        }
+        if (chart.stretchChart) {
+          x1 = x1 * t;
+        }
+        let y1 = (chartHeight+chartHeightOffset) - top * heightScaler * tScaled;
+        let y2 = (chartHeight+chartHeightOffset) - bottom * heightScaler * tScaled;
+        let yLow = (chartHeight+chartHeightOffset) - d.low * heightScaler * tScaled;
+        let yTop = (chartHeight+chartHeightOffset) - d.high * heightScaler * tScaled;
+        pathStr.push('M');
+        pathStr.push(x1);
+        pathStr.push(y2);
+        pathStr.push('H');
+        pathStr.push(x1 + barWidth);
+        pathStr.push('V');
+        pathStr.push(y1);
+        pathStr.push('H');
+        pathStr.push(x1);
+        pathStr.push('V');
+        pathStr.push(y2);
+        // Make candle line bottom:
+        pathStr.push('M');
+        pathStr.push(x1 + barWidth/2);
+        pathStr.push(yLow);
+        pathStr.push('V');
+        pathStr.push(y2);
+        // Make candle line top:
+        pathStr.push('M');
+        pathStr.push(x1 + barWidth/2);
+        pathStr.push(yTop);
+        pathStr.push('V');
+        pathStr.push(y1);
+    return {
+      //openHigherThanClose, pathStr, barCords: {x1: x1, x2: x1+barWidth, y1: y1, y2: y2}
+      openHigherThanClose, pathStr: pathStr.join(' '), barCords: {x1: x1, x2: x1+barWidth, y1: yTop, y2: yLow}
+    };
+  }
+
   /**
    * Common function used by line/spline/area charts to compute
    * the next X coordinate when generating the chart SVG path.
@@ -777,7 +843,7 @@ function getMinMaxValues(arr) {
       return {maxValue, minValue};
   }
 
-   /**
+  /**
  * Find minimum and maximum X and Y values in an array of
  * XY coordinate objects
  */
@@ -802,6 +868,24 @@ function getMinMaxValuesXY(arr) {
         }
       });
       return {maxValueX, minValueX, maxValueY, minValueY};
+  }
+
+  /**
+ * Find minimum and maximum value in an array of candlestick objects
+ */
+function getMinMaxValuesCandlestick(arr) {
+    let maxValue = Number.MIN_VALUE;
+    let minValue = Number.MAX_VALUE;
+    arr
+      .forEach((d) => {
+        if (d.high > maxValue) {
+          maxValue = d.high;
+        }
+        if (d.low < minValue) {
+          minValue = d.low;
+        }
+      });
+      return {maxValue, minValue};
   }
 
   function  computeChartSum(chart) {
@@ -866,11 +950,13 @@ export {
   makeSpline,
   getMinMaxValues,
   getMinMaxValuesXY,
+  getMinMaxValuesCandlestick,
   computeChartSum,
   findRectangleIndexContainingPoint,
   findClosestPointIndexWithinRadius,
   makeBarsChartPath,
   makeAreaChartPath,
   makeLineChartPath,
-  makeSplineChartPath
+  makeSplineChartPath,
+  makeCandlestickChart
  }
