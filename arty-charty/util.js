@@ -430,7 +430,7 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
    * @param  {boolean} makeArea          Wether to close the line (make it an
    *                                     area chart) or not.
    */
-   function makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, makeArea, isRange) {
+  function makeLineOrAreaChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, makeArea, isRange) {
     let heightScaler = (chartHeight-markerRadius)/maxValue;
     let xSpacing = width / pointsOnScreen;
     let centeriser = xSpacing / 2 - markerRadius;
@@ -475,6 +475,32 @@ function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOf
       lineStrArray.push('Z');
       console.log(lineStrArray.join(' '));
     }
+    return {
+      path: lineStrArray.join(' '),
+      width: xCord + markerRadius,
+      maxScroll: fullWidth - xSpacing + markerRadius
+    };
+  }
+
+  function makeLineStepChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen) {
+    let heightScaler = (chartHeight-markerRadius)/maxValue;
+    let xSpacing = width / pointsOnScreen;
+    let fullWidth = xSpacing*(chart.data.length-1) + markerRadius;
+    let lineStrArray = [
+          'M0',
+          (chartHeight+chartHeightOffset) - chart.data[0].value * heightScaler  * (chart.timingFunctions ? chart.timingFunctions[0 % chart.timingFunctions.length](t) : 1)
+      ];
+    let idx, xCord, yCord;
+    for (idx = 0; idx < chart.data.length-1; idx++) {
+      xCord = (idx+1)*xSpacing;
+      if (xCord > fullWidth * t && chart.drawChart) {
+        break;
+      }
+      lineStrArray.push('H' + xCord);
+      yCord = (chartHeight+chartHeightOffset) - chart.data[idx+1].value * heightScaler  * (chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1);
+      lineStrArray.push('V' + yCord);
+    }
+    lineStrArray.push('H' + chart.data.length*xSpacing);
     return {
       path: lineStrArray.join(' '),
       width: xCord + markerRadius,
@@ -1002,5 +1028,6 @@ export {
   makeLineChartPath,
   makeSplineChartPath,
   makeCandlestickChart,
-  makeAreaRangeChartPath
+  makeAreaRangeChartPath,
+  makeLineStepChartPath
  }

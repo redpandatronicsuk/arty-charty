@@ -12,7 +12,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 const {Surface, Group, Shape, LinearGradient} = ART;
-import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath} from '.';
+import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
 
 const SELCTED_MARKER_ANIMATION_DURATION = 1000;
@@ -427,6 +427,15 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             markerCords = this.makeMarkersCoords(chart, width, this.state.t);
             chart.markerCords = markerCords;
             charts.push(this.makeMarkers(markerCords, idx));
+            break;
+          case 'step':
+            chartData = makeLineStepChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
+            this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
+            charts.push(<Shape
+                  key={idx + 10000} 
+                  d={chartData.path}
+                  stroke={chart.lineColor || DEFAULT_LINE_COLOR}
+                  strokeWidth={3} />);
             break;
           case 'spline-area':
             chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, true);
