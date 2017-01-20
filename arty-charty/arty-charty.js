@@ -220,7 +220,7 @@ class ArtyCharty extends Component {
                     this.onMarkerClick(idx, closestMarker);
                     return true;
                   }
-                } else if (d.type === 'bars') {
+                } else if (d.type.slice(0,4) === 'bars') {
                   let clickedBar = findRectangleIndexContainingPoint(d.barCords, tmpX - px, tmpY - py + CHART_HEIGHT / 2);
                   if (clickedBar !== undefined) {
                     this.onMarkerClick(idx, clickedBar);
@@ -390,6 +390,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
        let markerCords;
        let makeMarkers = true;
        let doBreak = false;
+       let rangeChart = false;
        switch (chart.type) {
          case 'area':
             chartData = makeAreaChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
@@ -469,8 +470,10 @@ makeLinearGradientForAreaChart(chart, idx, width) {
               charts.push(this.makeMarkers(markerCords, idx));
             }
             break;
+          case 'bars-range':
+            rangeChart = true;
           case 'bars':
-          chartData = makeBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT);
+          chartData = makeBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT, rangeChart);
             chart.barCords = chartData.barCords;
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             charts.push(<Shape

@@ -273,23 +273,24 @@ function computeSplineControlPoints(K)
    *                                     without having to scroll. Used to calculate
    *                                     the horizontal spacing between points. (maybe find better name????)
    */
-function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, paddingLeft) {
+function makeBarsChartPath(chart, width, t, maxValue, chartHeight, chartHeightOffset, markerRadius, pointsOnScreen, paddingLeft, isRange) {
     let heightScaler = (chartHeight-markerRadius)/maxValue;
     let xSpacing = width / pointsOnScreen;
     let barWidth = xSpacing - paddingLeft;
     let fullWidth = paddingLeft/2 + (paddingLeft+barWidth) * (chart.data.length-1) + barWidth;
     let pathStr = []
     let barCords = [];
+    let x1, y1, y2;
     chart.data.some((d, idx) => {
-        let x1 = paddingLeft/2 + (paddingLeft+barWidth) * idx;
+        x1 = paddingLeft/2 + (paddingLeft+barWidth) * idx;
         if (x1 > fullWidth * t && chart.drawChart) {
           return true;
         }
         if (chart.stretchChart) {
           x1 = x1 * t;
         }
-    let y1 = (chartHeight+chartHeightOffset) - d.value * heightScaler * (chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1);
-        let y2 = (chartHeight+chartHeightOffset);
+        y1 = (chartHeight+chartHeightOffset) - d.value * heightScaler * (chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1);
+        y2 = isRange ? (chartHeight+chartHeightOffset) - d.valueLow * heightScaler * (chart.timingFunctions ? chart.timingFunctions[idx % chart.timingFunctions.length](t) : 1) : (chartHeight+chartHeightOffset);
         pathStr.push('M');
         pathStr.push(x1);
         pathStr.push(y2);
