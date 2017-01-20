@@ -141,6 +141,23 @@ import { ArtyCharty } from 'arty-charty';
         ]} />
 ```
 
+#### Bars-range chart
+![Bars-range chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/bars-range.mov-10-320.gif)
+```javascript
+<ArtyCharty
+    interactive={true}
+    clickFeedback={true}
+    animated={true}
+    data={[{
+        type: 'bars-range',
+        lineColor: 'fuchsia',
+        data: Array.from(Array(20)).map(() => {
+        let rand = Math.random() + 2;
+        return {value: rand, valueLow: rand - Math.random() - .5};
+        })}
+        ]} />
+```
+
 #### Candlestick chart
 ![Candlestick chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/candlestick.mov-10-320.gif)
 ```javascript
