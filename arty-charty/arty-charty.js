@@ -84,10 +84,10 @@ class ArtyCharty extends Component {
             this.setState(Object.assign(this.state, 
                 Object.assign(this.state.clickFeedback, {
                   o: 1 - t,
-                  r: 300 * t
+                  r: 100 * t
                 })
           ));
-      }, EasingFunctions.easeInCubic, false);
+      }, EasingFunctions.easeOutCubic, false);
     }
     
     // Only call if lowHighCol stuff?????
