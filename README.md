@@ -158,6 +158,27 @@ import { ArtyCharty } from 'arty-charty';
         ]} />
 ```
 
+#### Bars-3d chart
+![Bars-3d chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/bars-3d.mov-10-320.gif)
+```javascript
+<ArtyCharty
+    animated={true}
+    interactive={true}
+    clickFeedback={true}
+    data={[{
+        type: 'bars-3d',
+        drawChart: true,
+        data: Array.from(Array(3)).map((u, idx) => {
+        let col = `rgb(${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)})`;
+            return Array.from(Array(5)).map((u2, idx2) => {
+            let val = Math.random();
+            return {value: val, color: shadeColor(col, 1 - val)};
+            });
+        })
+    }
+    ]} />
+```
+
 #### Candlestick chart
 ![Candlestick chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/candlestick.mov-10-320.gif)
 ```javascript
@@ -367,6 +388,28 @@ For the line and pie chart there is also a [spark](https://en.wikipedia.org/wiki
 
 #### ArtySparkyPie
 ![ArtySparkyPie](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/sparky-pie.png)
+```javascript
+<ArtySparkyPie
+    data={{data: Array.from(Array(5)).map(() => {
+        return {
+            value: Math.random(),
+            color: `rgb(${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)})`
+        }
+    })}}
+        size={50}
+    />
+```
+
+#### ArtyChartyHeatmap
+![ArtyChartyHeatmap](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/heatmap.png)
+```javascript
+<ArtyChartyHeatmap data={[
+    [1,2,3,4,5,6],
+    [7,8,9,10,11,12],
+    [13,14,15,16,17,18],
+    [19,20,21,22,23,24]
+]} highColor="red" lowColor="blue" />
+```
 
 ## Contributing
 If you find bugs or have any suggestions, please open an issue. Pull requests are also welcome. All charts are rendered as SVG paths, have a look at this [CodePen](http://codepen.io/dobe/pen/JKLqaq) if you want to get more familiar with SVG paths and how we use them to generate charts.
@@ -374,6 +417,9 @@ If you find bugs or have any suggestions, please open an issue. Pull requests ar
 ### TO-DO:
 - Better documentation
 - Add more parameters: [markerRadius, selectedMarkerRadii, markerColor, selectedMarkerColors, yAxis stuff, xAxis, animation stuff] and imporve parameter names
-- More chart types [bar-range, stacked-columns]
+- More chart types [stacked-columns]
 - Nicer animations for adding/removing data points from the chart
 - Editable/draggable points with onValueChange callback function
+
+
+- Try replacing panlistener transformX with offset in render function, that can also be used to render only points shown on the screen!!!
