@@ -12,7 +12,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 const {Surface, Group, Shape, LinearGradient} = ART;
-import {complement, Tweener, AmimatedCirclesMarker, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath} from '.';
+import {complement, Tweener, AmimatedCirclesMarker, makeBars3DChartPath, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, getMaxSumStack, getMaxSumBars3d, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath, makeStackedBarsChartPath} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
 
 const SELCTED_MARKER_ANIMATION_DURATION = 1000;
@@ -114,6 +114,10 @@ class ArtyCharty extends Component {
         val = getMinMaxValuesCandlestick(d.data)
       } else if (d.type === 'area-range') {
         val = getMinMaxValuesRange(d.data);
+      } else if (d.type === 'stacked-bars') {
+        val = {maxValue: getMaxSumStack(d.data)};
+      } else if (d.type === 'bars-3d') {
+        val = {maxValue: getMaxSumBars3d(d.data)};
       } else {
         val = getMinMaxValues(d.data);
       }
@@ -195,7 +199,6 @@ class ArtyCharty extends Component {
         moved = false;
       },
       onPanResponderMove: this.props.noScroll ? ()=>{} : (evt, gestureState) => {
-        // console.log(Math.min(20, Math.max(sX + gestureState.dx, -this.maxScroll - 20)), 'ms', this.maxScroll);
         this.setState(Object.assign(this.state, {
           trX: Math.min(20, Math.max(sX + gestureState.dx, -this.maxScroll - 20))
         }));
@@ -229,7 +232,7 @@ class ArtyCharty extends Component {
                       return true;
                     }
                   }
-                } else if (d.type === 'candlestick') {
+                } else if (d.type === 'candlestick' || d.type === 'stacked-bars') {
                   let clickedCandlestick = findRectangleIndexContainingPoint(d.barCords, tmpX - px, tmpY - py + CHART_HEIGHT / 2);
                   if (clickedCandlestick !== undefined) {
                     this.onMarkerClick(idx, clickedCandlestick);
@@ -483,6 +486,43 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   strokeWidth={3}
                   fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)} />);
                   break;
+          case 'stacked-bars':
+            chartData = makeStackedBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT, this.props.yAxisLeft.width, true);
+            chart.barCords = chartData.barCords;
+            chartData.path.forEach((d, idx2) => {
+              charts.push(<Shape key={idx2 + 20000} 
+                  d={d.path}
+                  fill={d.color}
+                  stroke="red"
+                  strokeWidth={idx === this.state.activeMarker.chartIdx && idx2 === this.state.activeMarker.pointIdx ? 3 : 0} />);
+            });
+            break;
+          case 'bars-3d':
+            chartData = makeBars3DChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT, this.props.yAxisLeft ? this.props.yAxisLeft.width : 0, true);
+            chart.barCords = chartData.barCords;
+            chartData.path.forEach((d, idx2) => {
+              let isActive = idx === this.state.activeMarker.chartIdx && d.pointIdx === this.state.activeMarker.pointIdx;
+              charts.push(<Group key={idx2 + 290000} opacity={isActive ? 1 : .75}>
+                <Shape 
+                  d={d.main}
+                  fill={d.mainColor}
+                  stroke={complement(d.mainColor)}
+                  strokeWidth={isActive ? 5 : 0} />
+                  <Shape 
+                  d={d.side}
+                  fill={d.sideColor}
+                  stroke={complement(d.sideColor)}
+                  strokeWidth={isActive ? 5 : 0} />
+                  <Shape 
+                  d={d.top}
+                  fill={d.topColor}
+                  stroke={complement(d.topColor)}
+                  strokeWidth={isActive ? 5 : 0} />
+                  </Group>
+                  );
+            });
+            
+            break;
           case 'candlestick':
           chartData = makeCandlestickChart(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT);
           chart.barCords = chartData.barCords;
@@ -502,7 +542,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
         <View style={[styles.container, {
           transform: [{translateX: this.state.trX}],
           width: width
-        }]}
+        }, this.props.style]}
         ref="chart" >
           <Surface width={this.maxScroll + width} height={CHART_HEIGHT+CHART_HEIGHT/2}
           style={styles.chartSurface}>
@@ -530,7 +570,8 @@ const styles = StyleSheet.create({
   chartSurface: {
     backgroundColor: 'rgba(0,0,0,0)',
     overflow: 'visible',
-    marginTop: -CHART_HEIGHT/2
+    marginTop: -CHART_HEIGHT/2,
+    //backgroundColor: 'rgba(0,0,0,.2)'
   },
   axesContainer: {
     position: 'absolute',
