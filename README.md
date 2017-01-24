@@ -315,6 +315,64 @@ import { ArtyChartyPie } from 'arty-charty';
 `color` | **string** | Color of the slice
 `value` | **number** | Value
 
+### ArtyChartyRadar
+![Radar chart](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/radar.mov-10-320.gif)
+```javascript
+import { ArtyChartyRadar } from 'arty-charty';
+...
+<ArtyChartyRadar 
+  gridColor="orange"
+  gridLineWidth={1}
+  gridStrokeDash={[0,0,4,6]}
+  gridTextColor="white"
+  gridTextSize={18}
+  labelsTextSize={28}
+  labelsTextColor="white"
+  fill="rgba(0,255,0,.1)"
+  labels={['Pace', 'Shooting', 'Passing', 'Dribbling', 'Defending', 'Physical']}
+  data={[
+    {
+      lineColor: 'black',
+      markerColor: 'yellow',
+      fill: 'rgba(85,37,130,.25)',
+      data: Array.from(Array(6)).map(Math.random)
+    },
+    {
+      lineColor: 'aqua',
+      lineWidth: 5,
+      strokeDash: [0,10],
+      lineCap: 'round',
+      markerColor: 'blue',
+      fill: 'rgba(255,0,0,.25)',
+      data: Array.from(Array(6)).map(Math.random)
+    }
+    ]}/>
+```
+#### Parameters
+| Parameter | Type | Description |
+| --------- |:----:| :-----------|
+`gridColor` | **string** | Color of the grid
+`gridLineWidth` | **number** | Line width of the grid
+`gridStrokeDash` | **array** | SVG dash-array of the grid line
+`gridTextColor` | **string** | Color of the grid ticks text
+`gridTextSize`  | **number** | Size of the grid ticks text
+`labelsTextColor`  | **string** | Color of the outer labels text
+`labelsTextSize`  | **number** | Size of the outer labels text
+`fill` | **string** | Backgroud color of the chart
+`Labels` | **array** | Array of strings to use as labels
+`data` | **array** | Array of data objects
+`onMarkerClick(clickedMarkerIdx, clickedChartIdx)` | **function** | Call back when a markeris clicked, the index of the point is passed and the index of the dataset are passed as arguments to the callback function.
+##### Data objects
+| Property | Type | Description |
+| -------- |:----:| :-----------|
+`lineColor` | **string** | Color of the line
+`lineWidth` | **number** | Width of the line
+`lineCap` | **string** | [SVG line cap](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap) of the line
+`strokeDash` | **array** | [SVG dash-array](https://developer.mozilla.org/en/docs/Web/SVG/Attribute/stroke-dasharray) of the line
+`markerColor` | **string** | Color of the marker
+`fill` | **string** | Fill color
+`data` | **array** | Array of numbers
+
 ### ArtyChartyXY
 ArtyChartyXY is used to plot data on a X-Y axis, such as scatter and bubble charts.
 #### Parameters
@@ -415,7 +473,7 @@ For the line and pie chart there is also a [spark](https://en.wikipedia.org/wiki
 If you find bugs or have any suggestions, please open an issue. Pull requests are also welcome. All charts are rendered as SVG paths, have a look at this [CodePen](http://codepen.io/dobe/pen/JKLqaq) if you want to get more familiar with SVG paths and how we use them to generate charts.
 
 ### TO-DO:
-- Better documentation
+- Better documentation, add default values to parameter tables
 - Add more parameters: [markerRadius, selectedMarkerRadii, markerColor, selectedMarkerColors, yAxis stuff, xAxis, animation stuff] and imporve parameter names
 - More chart types [stacked-columns]
 - Nicer animations for adding/removing data points from the chart
