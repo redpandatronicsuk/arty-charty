@@ -1,6 +1,6 @@
 {
   "name": "arty-charty",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "React Native charts using ART",
   "main": "index.js",
   "scripts": {
