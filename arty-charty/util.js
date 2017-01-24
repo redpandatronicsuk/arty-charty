@@ -953,6 +953,7 @@ function complement(color) {
   let rgb = parseColor(color);
   let hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
   hsl[0] = (hsl[0] + .5) % 1;
+  hsl[2] = 1 - hsl[2];
   return hslToRgb(...hsl);
 }
 
@@ -1119,6 +1120,7 @@ function getMinMaxValuesCandlestick(arr) {
   }
 
 export { 
+  polarToCartesian,
   makeArc,
   inerpolateColors,
   inerpolateColorsFixedAlpha,
