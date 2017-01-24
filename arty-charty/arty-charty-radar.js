@@ -129,7 +129,7 @@ class ArtyChartyRadar extends Component {
       path.push(coords.x);
       path.push(coords.y);
     }
-    return <Shape stroke={this.props.gridColor} strokeWidth={1} d={path} fill={this.props.fill || 'rgba(0,0,0,.1)'} />
+    return <Shape strokeDash={this.props.gridStrokeDash || []} stroke={this.props.gridColor} strokeWidth={this.props.gridLineWidth || 1} d={path} fill={this.props.fill || 'rgba(0,0,0,.1)'} />
   }
 
   makeAxisLabel(num) {
@@ -177,7 +177,7 @@ class ArtyChartyRadar extends Component {
     });
     let lines = this.coords.map((data, idx) => {
            return (
-             <Shape key={idx} stroke={this.props.data[idx].lineColor || 'red'} strokeWidth={3} fill={this.props.data[idx].fill || 'rgba(0,255,0,.2)'} d={this.makeChartPath(data)} />
+             <Shape key={idx} stroke={this.props.data[idx].lineColor || 'red'} strokeWidth={this.props.data[idx].lineWidth || 3} strokeDash={this.props.data[idx].strokeDash || []} strokeJoin={this.props.data[idx].lineCap || 'square'} strokeCap={this.props.data[idx].lineCap || 'square'} fill={this.props.data[idx].fill || 'rgba(0,255,0,.2)'} d={this.makeChartPath(data)} />
              )
           });
     let markers = this.coords.map((data, idx) => {
