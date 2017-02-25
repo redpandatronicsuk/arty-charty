@@ -269,8 +269,8 @@ componentWillReceiveProps(nextProps) {
 }
 
   componentWillUnmount() {
-    this.animateClickFeedbackTweener.stop();
-    this.animateChartTweener.stop();
+    if (this.animateClickFeedbackTweener) this.animateClickFeedbackTweener.stop();
+    if (this.animateChartTweener) this.animateChartTweener.stop();
   }
 
   onMarkerClick(chartIdx, pointIdx) {
