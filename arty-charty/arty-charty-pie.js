@@ -7,11 +7,16 @@ import {
   Responder,
   Text,
   View,
-  ART,
   TouchableOpacity,
   Easing
 } from 'react-native';
-const {Surface, Group, Shape, LinearGradient} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 import {Spring,EasingFunctions} from '../timing-functions';
 import {makeArc, Tweener, computeChartSum} from '.';
 
@@ -134,11 +139,11 @@ class ArtyChartyPie extends Component {
   render() {
     let size = this.props.size || Dimensions.get('window').width;
     let r = size * .5;
-    let pieSlices = [];
-    this.slices.forEach((d, idx) => {
+    let pieSlices = 
+    this.slices.map((d, idx) => {
       let cx = this.state.selectedSlice === idx ? r + d.vector.x * this.spring.interpolate(this.state.t2) * 10 : this.state.previousSelectedSlice === idx ? r + d.vector.x * this.spring2.interpolate(1-this.state.t2) * 10 : r;
       let cy = this.state.selectedSlice === idx ? r + d.vector.y * this.spring.interpolate(this.state.t2) * 10 : this.state.previousSelectedSlice === idx ? r + d.vector.y * this.spring2.interpolate(1-this.state.t2) * 10 : r;
-      pieSlices.push(<Shape key={idx}
+      return (<Path key={idx}
           d={makeArc(cx, cy,r * .9, d.startAngle, d.startAngle + this.state.t * (d.arcLength-1e-12), true)}
           fill={this.props.data.data[idx].color}
           stroke="rgba(255,255,255,.5)"
@@ -156,9 +161,9 @@ class ArtyChartyPie extends Component {
             outputRange: ['0deg', '360deg']
           })}, {scale: this.state.scale}]
       },this.props.style]}>
-        <Surface width={size} height={size} >
+        <Svg width={size} height={size} >
           {pieSlices}
-        </Surface>
+        </Svg>
       </Animated.View>
     );
   }

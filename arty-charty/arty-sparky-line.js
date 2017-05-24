@@ -1,9 +1,14 @@
 import React, {Component} from 'react';
 import {
-  View,
-  ART
+  View
 } from 'react-native';
-const {Surface, Shape} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 
 class ArtySparkyLine extends Component {
   constructor(props) {
@@ -18,8 +23,8 @@ class ArtySparkyLine extends Component {
   _computeChartConstants() {
     this.maxValue = Number.MIN_VALUE;
     this.props.data.forEach(d => {
-      if (d > this.maxValue) {
-          this.maxValue = d;
+      if (d.value > this.maxValue) {
+          this.maxValue = d.value;
       }
     });
   }
@@ -38,7 +43,7 @@ class ArtySparkyLine extends Component {
     this.props.data.forEach((d, idx) => {
         let xCord = idx*xSpacing;
         lineStrArray.push((idx ? 'L' : 'M') + xCord);
-        let yCord = this.props.height - d * heightScaler;
+        let yCord = this.props.height - d.value * heightScaler;
         lineStrArray.push(yCord);
     });
     return lineStrArray.join(' ');
@@ -47,13 +52,14 @@ class ArtySparkyLine extends Component {
   render() {
     return (
         <View style={this.props.style} >
-          <Surface width={this.props.width} height={this.props.height}
+          <Svg width={this.props.width} height={this.props.height}
           style={{backgroundColor: 'rgba(0,0,0,0)', overflow: 'visible'}}>
-            <Shape
+            <Path
                     d={this.makeLineChartPath()}
                     stroke={this.props.color || "black"}
-                    strokeWidth={1} />
-        </Surface>
+                    strokeWidth={1}
+                    fill='transparent' />
+        </Svg>
         </View>
     );
   }

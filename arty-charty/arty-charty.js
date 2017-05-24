@@ -8,10 +8,15 @@ import {
   StyleSheet,
   Text,
   View,
-  ART,
   TouchableOpacity
 } from 'react-native';
-const {Surface, Group, Shape, LinearGradient} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 import {complement, Tweener, AmimatedCirclesMarker, makeBars3DChartPath, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, getMaxSumStack, getMaxSumBars3d, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath, makeStackedBarsChartPath} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
 
@@ -299,16 +304,27 @@ componentWillReceiveProps(nextProps) {
     });
   }
 
+  // makeGradStops(maxValue, chartIdx) {
+  //   let gradStops = {};
+  //   this.props
+  //     .data[chartIdx].data
+  //     .forEach((d, idx) => {
+  //       let fillColors = d.fillColors ? d.fillColors : {active: 'white', inactive: 'gray'};
+  //       let color = this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === idx ? fillColors.active : fillColors.inactive;
+  //       gradStops[(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length)] = color;
+  //     });
+  //     return gradStops;
+  // }
+
   makeGradStops(maxValue, chartIdx) {
-    let gradStops = {};
-    this.props
+    return this.props
       .data[chartIdx].data
-      .forEach((d, idx) => {
+      .map((d, idx) => {
         let fillColors = d.fillColors ? d.fillColors : {active: 'white', inactive: 'gray'};
         let color = this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === idx ? fillColors.active : fillColors.inactive;
-        gradStops[(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length)] = color;
+        return <Stop key={idx} offset={(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length) + ''} stopColor={color} stopOpacity="1" />
+        //gradStops[(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length)] = color;
       });
-      return gradStops;
   }
 
 makeMarkersCoords(chart, width, t) {
@@ -357,8 +373,8 @@ makeYaxis(num, minVal, maxVal) {
   let lineDecrement = (maxVal - minVal) / num;
   let lines = [];
   for (i = 0 ; i <= num; i++) {
-    lines.push(<Shape key={i} strokeDash={[0, 0, 4, 6]} stroke="black" strokeWidth={.5}  d={`M 0 ${topY + interval * i} H ${Dimensions.get('window').width}`} />);
-    lines.push(<ART.Text key={1000+i} fill="black" stroke="white" strokeWidth={1} x={0} y={(topY + interval * i) - 22} font="20px Arial">{lineVal.toFixed(2)}</ART.Text>);
+    lines.push(<Path key={i} strokeDash={[0, 0, 4, 6]} stroke="black" strokeWidth={.5}  d={`M 0 ${topY + interval * i} H ${Dimensions.get('window').width}`} />);
+    lines.push(<SVG.Text key={1000+i} fill="black" stroke="white" strokeWidth={1} x={0} y={(topY + interval * i) - 22} font="20px Arial">{lineVal.toFixed(2)}</SVG.Text>);
     lineVal -= lineDecrement;
   }
   return lines;
@@ -382,11 +398,14 @@ animateClickFeedback(x, y) {
 }
 
 makeLinearGradientForAreaChart(chart, idx, width) {
-  return new LinearGradient(this.makeGradStops(chart.maxValue, idx), 0, 0, width, 0);
+  return <LinearGradient key={idx} id="grad" x1="0" y1="0" x2={width} y2="0">
+            {this.makeGradStops(chart.maxValue, idx)}
+        </LinearGradient>
 }
 
   render() {
     let width = Dimensions.get('window').width;
+    let linGrads = [];
      let charts = this.props.data.map((chart, idx) =>  {
        let chartData;
        let charts = [];
@@ -401,7 +420,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             // recomputmax for all!!
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             // this.maxScroll = chartData.maxScroll;
-            charts.push(<Shape key={idx} d={chartData.path}
+            charts.push(<Path key={idx} d={chartData.path}
               fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)}
             />);
             if (chart.hideLine) {
@@ -412,7 +431,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             if (!doBreak) {
               chartData = makeAreaRangeChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
-            charts.push(<Shape key={idx} d={chartData.path}
+            charts.push(<Path key={idx} d={chartData.path}
               fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)}
             />);
             if (chart.hideLine) {
@@ -422,7 +441,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           case 'line':
             chartData = makeLineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
-            charts.push(<Shape
+            charts.push(<Path
                   key={idx + 10000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
@@ -435,7 +454,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           case 'step':
             chartData = makeLineStepChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
-            charts.push(<Shape
+            charts.push(<Path
                   key={idx + 10000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
@@ -443,7 +462,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             break;
           case 'spline-area':
             chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, true);
-              charts.push(<Shape
+              charts.push(<Path
                   key={idx + 30000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
@@ -460,7 +479,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           case 'spline':
             chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, false);
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
-            charts.push(<Shape
+            charts.push(<Path
                   key={idx + 10000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
@@ -478,19 +497,20 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           case 'bars':
           chartData = makeBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT, rangeChart);
             chart.barCords = chartData.barCords;
+          linGrads.push(this.makeLinearGradientForAreaChart(chart, idx, chartData.width));
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
-            charts.push(<Shape
+            charts.push(<Path
                   key={idx + 20000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
                   strokeWidth={3}
-                  fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)} />);
+                  fill={'url(#grad)'} />);
                   break;
           case 'stacked-bars':
             chartData = makeStackedBarsChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT, this.props.yAxisLeft.width, true);
             chart.barCords = chartData.barCords;
             chartData.path.forEach((d, idx2) => {
-              charts.push(<Shape key={idx2 + 20000} 
+              charts.push(<Path key={idx2 + 20000} 
                   d={d.path}
                   fill={d.color}
                   stroke="red"
@@ -503,17 +523,17 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             chartData.path.forEach((d, idx2) => {
               let isActive = idx === this.state.activeMarker.chartIdx && d.pointIdx === this.state.activeMarker.pointIdx;
               charts.push(<Group key={idx2 + 290000} opacity={isActive ? 1 : .75}>
-                <Shape 
+                <Path 
                   d={d.main}
                   fill={d.mainColor}
                   stroke={complement(d.mainColor)}
                   strokeWidth={isActive ? 5 : 0} />
-                  <Shape 
+                  <Path 
                   d={d.side}
                   fill={d.sideColor}
                   stroke={complement(d.sideColor)}
                   strokeWidth={isActive ? 5 : 0} />
-                  <Shape 
+                  <Path 
                   d={d.top}
                   fill={d.topColor}
                   stroke={complement(d.topColor)}
@@ -527,7 +547,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           chartData = makeCandlestickChart(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, PAD_LEFT);
           chart.barCords = chartData.barCords;
           chartData.paths.forEach((d, idx2) => {
-            charts.push(<Shape
+            charts.push(<Path
                   key={idx2 + 80000} 
                   d={d.pathStr}
                   stroke={chart.lineColor}
@@ -544,17 +564,20 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           width: width
         }, this.props.style]}
         ref="chart" >
-          <Surface width={this.maxScroll + width} height={CHART_HEIGHT+CHART_HEIGHT/2}
+          <Svg width={this.maxScroll + width} height={CHART_HEIGHT+CHART_HEIGHT/2}
           style={styles.chartSurface}>
           {charts}
-          <Shape d={makeCircle(this.state.clickFeedback.x, this.state.clickFeedback.y, this.state.clickFeedback.r)} fill={`rgba(255,255,255, ${this.state.clickFeedback.o})`} />
-        </Surface>
+          <Defs>
+            {linGrads}
+          </Defs>
+          <Path d={makeCircle(this.state.clickFeedback.x, this.state.clickFeedback.y, this.state.clickFeedback.r)} fill={`rgba(255,255,255, ${this.state.clickFeedback.o})`} />
+        </Svg>
         </View>
         <View {...this._panResponder.panHandlers} style={styles.axesContainer}>
-          <Surface width={this.maxScroll + width} height={CHART_HEIGHT+CHART_HEIGHT/2}
+          <Svg width={this.maxScroll + width} height={CHART_HEIGHT+CHART_HEIGHT/2}
           style={styles.chartSurface}>
            {this.yAxis}
-        </Surface>
+        </Svg>
         </View>
       </View>
     );

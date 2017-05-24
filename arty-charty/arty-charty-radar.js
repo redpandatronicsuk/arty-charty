@@ -6,13 +6,18 @@ import {
   Image,
   Responder,
   StyleSheet,
-  Text,
   View,
-  ART,
   TouchableOpacity,
   Easing
 } from 'react-native';
-const {Surface, Group, Shape, LinearGradient, Transform} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop,
+    Text
+} from 'react-native-svg';
 import {Spring,EasingFunctions} from '../timing-functions';
 import {polarToCartesian, computeChartSum, Tweener, makeCircle, findClosestPointIndexWithinRadius, complement} from '.';
 
@@ -129,14 +134,14 @@ class ArtyChartyRadar extends Component {
       path.push(coords.x);
       path.push(coords.y);
     }
-    return <Shape strokeDash={this.props.gridStrokeDash || []} stroke={this.props.gridColor} strokeWidth={this.props.gridLineWidth || 1} d={path} fill={this.props.fill || 'rgba(0,0,0,.1)'} />
+    return <Path strokeDash={this.props.gridStrokeDash || []} stroke={this.props.gridColor} strokeWidth={this.props.gridLineWidth || 1} d={path} fill={this.props.fill || 'rgba(0,0,0,.1)'} />
   }
 
   makeAxisLabel(num) {
     let texts = [];
     let stepSize = this.center / num;
     for (i = 1; i < num+1; i++) {
-      texts.push(<ART.Text 
+      texts.push(<Text 
       key={i}
       fill={this.props.gridTextColor || 'black'}
       strokeWidth={.25}
@@ -145,7 +150,7 @@ class ArtyChartyRadar extends Component {
       x={this.center} 
       y={stepSize*(i-1) - (this.props.gridTextSize ? this.props.gridTextSize * .7 : 12) + PADDING_TOP}>
         {'—'+(this.maxVal/num * (num-i+1)).toFixed(2)}
-      </ART.Text>);
+      </Text>);
     }
     return texts;
   }
@@ -154,7 +159,7 @@ class ArtyChartyRadar extends Component {
     let stepSize = this.center / this.props.labels.length;
     let texts = this.props.labels.map((label, j) => {
       let coords = polarToCartesian(this.center, this.center, this.center + (this.props.labelsTextSize*.25 || 12*.25), this.angleStepSize*j + this.angleStepSize/2);
-       return (<ART.Text 
+       return (<Text 
             key={j}
             fill={this.props.labelsTextColor || 'black'}
             strokeWidth={.25}
@@ -165,7 +170,7 @@ class ArtyChartyRadar extends Component {
             x={coords.x} 
             y={coords.y + PADDING_TOP}>
               {label}
-            </ART.Text>);
+            </Text>);
     });
     return texts;
   }
@@ -177,25 +182,25 @@ class ArtyChartyRadar extends Component {
     });
     let lines = this.coords.map((data, idx) => {
            return (
-             <Shape key={idx} stroke={this.props.data[idx].lineColor || 'red'} strokeWidth={this.props.data[idx].lineWidth || 3} strokeDash={this.props.data[idx].strokeDash || []} strokeJoin={this.props.data[idx].lineCap || 'square'} strokeCap={this.props.data[idx].lineCap || 'square'} fill={this.props.data[idx].fill || 'rgba(0,255,0,.2)'} d={this.makeChartPath(data)} />
+             <Path key={idx} stroke={this.props.data[idx].lineColor || 'red'} strokeWidth={this.props.data[idx].lineWidth || 3} strokeDash={this.props.data[idx].strokeDash || []} strokeJoin={this.props.data[idx].lineCap || 'square'} strokeCap={this.props.data[idx].lineCap || 'square'} fill={this.props.data[idx].fill || 'rgba(0,255,0,.2)'} d={this.makeChartPath(data)} />
              )
           });
     let markers = this.coords.map((data, idx) => {
            return (
              data.map((d,idx2)=> {
-               return <Shape key={idx2} fill={this.props.data[idx].markerColor || 'red'}  stroke={this.props.data[idx].markerColor || 'red'} strokeWidth={this.state.clickedChart === idx && this.state.selectedMarker === idx2 ? 8 : 0} d={makeCircle(d.x,d.y,MARKER_RADIUS)} />
+               return <Path key={idx2} fill={this.props.data[idx].markerColor || 'red'}  stroke={this.props.data[idx].markerColor || 'red'} strokeWidth={this.state.clickedChart === idx && this.state.selectedMarker === idx2 ? 8 : 0} d={makeCircle(d.x,d.y,MARKER_RADIUS)} />
              })
              )
           });
     return(
       <View {...this._responder} ref="chart" style={{overflow: 'visible'}}>
-        <Surface width={this.size} height={this.size + PADDING_TOP*2} style={{overflow: 'visible'}} >
+        <Svg width={this.size} height={this.size + PADDING_TOP*2} style={{overflow: 'visible'}} >
         {this.polarGrid}
         {lines}
         {markers}
         {this.axisLabel}
         {this.makeOuterLabel()}
-        </Surface>
+        </Svg>
       </View>
     );
   }

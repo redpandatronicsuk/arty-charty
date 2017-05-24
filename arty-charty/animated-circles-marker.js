@@ -7,11 +7,16 @@ import {
   StyleSheet,
   Text,
   View,
-  ART,
   TouchableOpacity,
   StatusBar
 } from 'react-native';
-const {Group, Shape} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 import {Spring, EasingFunctions} from '../timing-functions';
 import {lightenColor, Tweener, makeCircle} from '.';
 
@@ -99,9 +104,9 @@ class AmimatedCirclesMarker extends Component {
   _makeMarker(cx, cy) {
     return (
       <Group>
-        <Shape d={makeCircle(cx, cy, this.state.r3 * MARKER_RADIUS)} fill={lightenColor(this.props.baseColor, .3) || 'rgba(0,255,0,.75)'}/>
-        <Shape style={styles.circle2} d={makeCircle(cx, cy, this.state.r2 * MARKER_RADIUS_2)} fill={lightenColor(this.props.baseColor, .1) || 'rgba(0,0,255,.75)'}/>
-        <Shape style={styles.circle3} d={makeCircle(cx, cy, this.state.r1 * MARKER_RADIUS_3)} fill={this.props.baseColor || 'rgba(255,0,0,.75)'}/>
+        <Path d={makeCircle(cx, cy, this.state.r3 * MARKER_RADIUS)} fill={lightenColor(this.props.baseColor, .3) || 'rgba(0,255,0,.75)'}/>
+        <Path style={styles.circle2} d={makeCircle(cx, cy, this.state.r2 * MARKER_RADIUS_2)} fill={lightenColor(this.props.baseColor, .1) || 'rgba(0,0,255,.75)'}/>
+        <Path style={styles.circle3} d={makeCircle(cx, cy, this.state.r1 * MARKER_RADIUS_3)} fill={this.props.baseColor || 'rgba(255,0,0,.75)'}/>
       </Group>
     );
   }

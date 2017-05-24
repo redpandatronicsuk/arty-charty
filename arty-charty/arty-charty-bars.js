@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {
-  ART
-} from 'react-native';
-const {Shape} = ART;
+import Svg,{
+    Path
+} from 'react-native-svg';
 
 class ArtyChartyBars extends Component {
   constructor(props) {
@@ -15,7 +14,7 @@ class ArtyChartyBars extends Component {
     //this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             
     return (
-        <Shape
+        <Path
             key={idx + 20000} 
             d={chartData.path}
             stroke={chart.lineColor || "rgba(255,255,255,.5)"}

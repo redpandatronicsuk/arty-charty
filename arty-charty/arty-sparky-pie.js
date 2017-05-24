@@ -8,11 +8,16 @@ import {
   StyleSheet,
   Text,
   View,
-  ART,
   TouchableOpacity,
   Easing
 } from 'react-native';
-const {Surface, Group, Shape, LinearGradient} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 import {Spring,EasingFunctions} from '../timing-functions';
 import {makeArc} from '.';
 
@@ -55,7 +60,7 @@ class ArtySparkyPie extends Component {
     this.slices.forEach((d, idx) => {
       let cx = r;
       let cy = r;
-      pieSlices.push(<Shape key={idx}
+      pieSlices.push(<Path key={idx}
           d={makeArc(cx, cy,r, d.startAngle, d.startAngle + d.arcLength, true)}
           fill={this.props.data.data[idx].color}
            />);
@@ -63,9 +68,9 @@ class ArtySparkyPie extends Component {
     return(
       <View
        style={this.props.style}>
-        <Surface width={size} height={size} >
+        <Svg width={size} height={size} >
           {pieSlices}
-        </Surface>
+        </Svg>
       </View>
     );
   }

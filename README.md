@@ -1,22 +1,15 @@
 # ARTy Charty
-React Native plugin for rendering charts using ART
+React Native plugin for rendering charts that used to use ART, but now switched to [react-native-svg](https://github.com/react-native-community/react-native-svg)
 
 ## About
-The goal of Arty Charty is to produce animated, interactive, performant charts. It uses React Native ART to render the charts. Arty Charty does not rely on 3rd party libraries, such as D3, to produce the charts. This keeps the size of the library small (<80kb uncompressed and not-minified) and chart generating functions can be optimised for speed.
+The goal of ARTy Charty is to produce animated, interactive, performant charts. It uses React Native ART to render the charts. Arty Charty does not rely on 3rd party libraries, such as D3, to produce the charts. This keeps the size of the library small (<80kb uncompressed and not-minified) and chart generating functions can be optimised for speed.
+
+We noticed some issues with the ART library, so we switched to use [react-native-svg](https://github.com/react-native-community/react-native-svg) instead.
 
 ## Installation
 `npm i --save arty-charty`
 
-### iOS only
-The React Native ART library comes shipped with React Native, but is not linked to your project by default. To link it, open XCode and
-
-1. Add the file from `node_modules/react-native/Libraries/ART/ART.xcodeproj` to the project by dragging into XCode
-2. To link it, go to the *Build Phases* tab and look for the *Link Binary With Libraries* list.
-Click on the **+** button below the list.
-3. In the window that pops up select `libART.a` and click the *Add* button.
-
-![XCode instructions 1](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/xcode-instructions-1.png)
-![XCode instructions 2](https://github.com/redpandatronicsuk/arty-charty-demo/raw/master/stuff/xcode-instructions-2.png)
+You also need to have `react-native-svg` in your project. You can find instructins on how to install it [here](https://github.com/react-native-community/react-native-svg).
 
 ## Usage
 For more advanced usage have a look at the demo app [here](https://github.com/redpandatronicsuk/arty-charty-demo).

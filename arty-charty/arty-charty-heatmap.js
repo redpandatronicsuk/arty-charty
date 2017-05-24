@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
 import {
   Dimensions,
-  View,
-  ART
+  View
 } from 'react-native';
-const {Surface, Shape} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 import { inerpolateColors } from '.';
 
 class ArtyChartyHeatmap extends Component {
@@ -26,7 +31,7 @@ class ArtyChartyHeatmap extends Component {
     this.props.data.forEach((row, rIdx) => {
       x = 0;
       row.forEach((col, cIdx) => {
-        this.grid.push(<Shape key={rIdx + '-' + cIdx} fill={this._getColor(col, min, max)} d={`M${x} ${y} H${x+ cellSize} V${y+ cellSize} H${x}`} />);
+        this.grid.push(<Path key={rIdx + '-' + cIdx} fill={this._getColor(col, min, max)} d={`M${x} ${y} H${x+ cellSize} V${y+ cellSize} H${x}`} />);
         x += cellSize;
       });
       y += cellSize;
@@ -48,9 +53,9 @@ class ArtyChartyHeatmap extends Component {
   render() {
     return (
         <View style={this.props.style} >
-          <Surface width={this.width} height={this.height}>
+          <Svg width={this.width} height={this.height}>
             {this.grid}
-        </Surface>
+        </Svg>
         </View>
     );
   }

@@ -8,11 +8,16 @@ import {
   StyleSheet,
   Text,
   View,
-  ART,
   TouchableOpacity,
   Easing
 } from 'react-native';
-const {Surface, Group, Shape, LinearGradient} = ART;
+import Svg,{
+    Defs,
+    G,
+    LinearGradient,
+    Path,
+    Stop
+} from 'react-native-svg';
 import {Spring,EasingFunctions} from '../timing-functions';
 import {makeArc, computeChartSum, Tweener} from '.';
 
@@ -152,13 +157,13 @@ class ArtyChartyDonut extends Component {
   render() {
     let size = this.maxR;
     let r = size * .5;
-    let donutSlices = [];
-    this.slices.forEach((d, idx) => {
-      donutSlices.push(<Shape key={idx}
+    let donutSlices = 
+    this.slices.map((d, idx) => {
+      return <Path key={idx}
           d={makeArc(r, r,this.props.data.data[d.dataSetIdx].r/2 * .9, d.startAngle, d.startAngle + EasingFunctions.bounce(this.state.t) * (d.arcLength-1e-12), false)}
           stroke={this.props.data.data[d.dataSetIdx].data[d.pointIdx].color}
           strokeWidth={this.state.selectedSlice === idx ? this.strokeWidth + 5 : this.strokeWidth/2}
-           />);
+           />;
     });
     return(
       <Animated.View
@@ -172,9 +177,9 @@ class ArtyChartyDonut extends Component {
             outputRange: ['0deg', '360deg']
           })}, {scale: this.state.scale}]
       },this.props.style]}>
-        <Surface width={size} height={size} style={{overflow: 'visible'}} >
+        <Svg width={size} height={size} style={{overflow: 'visible'}} >
           {donutSlices}
-        </Surface>
+        </Svg>
       </Animated.View>
     );
   }
