@@ -1,32 +1,34 @@
 {
-  "name": "arty-charty",
-  "version": "0.4.0",
-  "description": "React Native charts using ART",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/redpandatronicsuk/arty-charty.git"
-  },
-  "keywords": [
-    "react-native",
-    "ART",
-    "charts",
-    "graphs",
-    "react-component",
-    "ios",
-    "android"
-  ],
-  "author": "RedPandaTronics LTD",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/redpandatronicsuk/arty-charty/issues"
-  },
-  "homepage": "https://github.com/redpandatronicsuk/arty-charty#readme",
-  "peerDependencies": {
-    "react-native": "^0.40.0",
-    "react": ">=15.4.0"
-  }
+    "name": "arty-charty",
+    "version": "1.0.0",
+    "description": "React Native charts that used to use React-ART, but now uses react-native-svg",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/redpandatronicsuk/arty-charty.git"
+    },
+    "keywords": [
+        "react-native",
+        "ART",
+        "charts",
+        "graphs",
+        "react-component",
+        "ios",
+        "android",
+        "SVG",
+        "react-native-svg"
+    ],
+    "author": "RedPandaTronics LTD",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/redpandatronicsuk/arty-charty/issues"
+    },
+    "homepage": "https://github.com/redpandatronicsuk/arty-charty#readme",
+    "peerDependencies": {
+        "react-native": "^0.40.0",
+        "react": ">=15.4.0"
+    }
 }
