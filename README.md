@@ -234,6 +234,7 @@ import { ArtyCharty } from 'arty-charty';
 `onMarkerClick(clickedChartIdx, clickedEntryIdx)` | **function** | If interactive is set to true, this function will be called with the first parameter being the index of the chart that was clicked and the second parameter the index of the data point on that chart that was clicked. |
 `yAxisLeft` | **object** | If this parameter is set, the yAxis will be drawn, with the specified options, e.g. {numberOfTicks: 3, TODO: Add more options...} |
 `data` | **array** | Array containing chart objects, see next section for description.|
+`width` | **number** | Width in pixels of the chart.|
 
 ##### Chart object
 The `data` parameter for the ArtyCharty component is an array of chart objects, with the following options:
