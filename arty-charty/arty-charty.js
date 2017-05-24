@@ -365,6 +365,7 @@ makeMarker(cx, cy, chartIdx, pointIdx) {
   }
 
 makeYaxis(num, minVal, maxVal) {
+  const width = this.props.width || Dimensions.get('window').width
   let topY = (CHART_HEIGHT+CHART_HEIGHT_OFFSET) - this.maxValue * ((CHART_HEIGHT-MARKER_RADIUS)/this.maxValue);
   let bottomY = CHART_HEIGHT+CHART_HEIGHT/2;
   let i;
@@ -373,7 +374,7 @@ makeYaxis(num, minVal, maxVal) {
   let lineDecrement = (maxVal - minVal) / num;
   let lines = [];
   for (i = 0 ; i <= num; i++) {
-    lines.push(<Path key={i} strokeDash={[0, 0, 4, 6]} stroke="black" strokeWidth={.5}  d={`M 0 ${topY + interval * i} H ${Dimensions.get('window').width}`} />);
+    lines.push(<Path key={i} strokeDash={[0, 0, 4, 6]} stroke="black" strokeWidth={.5}  d={`M 0 ${topY + interval * i} H ${width}`} />);
     lines.push(<SVG.Text key={1000+i} fill="black" stroke="white" strokeWidth={1} x={0} y={(topY + interval * i) - 22} font="20px Arial">{lineVal.toFixed(2)}</SVG.Text>);
     lineVal -= lineDecrement;
   }
@@ -404,7 +405,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
 }
 
   render() {
-    let width = Dimensions.get('window').width;
+    let width = this.props.width || Dimensions.get('window').width;
     let linGrads = [];
      let charts = this.props.data.map((chart, idx) =>  {
        let chartData;
