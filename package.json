@@ -1,6 +1,6 @@
 {
   "name": "arty-charty",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React Native charts that used to use React-ART, but now uses react-native-svg",
   "main": "index.js",
   "scripts": {
