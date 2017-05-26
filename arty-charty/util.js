@@ -840,7 +840,7 @@ function parseColor(col) {
 }
 
 function RGBobj2string(obj) {
-  return `rgba(${obj.r},${obj.g},${obj.b},${obj.a})`;
+  return `rgba(${Math.round(obj.r)},${Math.round(obj.g)},${Math.round(obj.b)},${obj.a.toFixed(3)})`;
 }
 
 /**
