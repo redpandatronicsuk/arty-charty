@@ -314,7 +314,7 @@ componentWillReceiveProps(nextProps) {
   //       gradStops[(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length)] = color;
   //     });
   //     return gradStops;
-  // }
+  // 
 
   makeGradStops(maxValue, chartIdx) {
     return this.props
@@ -322,7 +322,16 @@ componentWillReceiveProps(nextProps) {
       .map((d, idx) => {
         let fillColors = d.fillColors ? d.fillColors : {active: 'white', inactive: 'gray'};
         let color = this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === idx ? fillColors.active : fillColors.inactive;
-        return <Stop key={idx} offset={(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length) + ''} stopColor={color} stopOpacity="1" />
+        // TO FIX: !!!!!
+        // As a quick fix, added stopOpacity here, as react-native-svg
+        // doesn't support rgba, but uses stopOpacity instead
+        // this is just a fix however, we should be able to do this
+        // more efficient
+        let opacity = 1
+        if (color.slice(0,4) === 'rgba') {
+          opacity = color.split(',')[3].slice(0,-1)
+        }
+        return <Stop key={idx} offset={(idx / this.props.data[chartIdx].data.length).toString()} stopColor={color} stopOpacity={opacity} />
         //gradStops[(idx / this.props.data[chartIdx].data.length) + (.5 / this.props.data[chartIdx].data.length)] = color;
       });
   }
@@ -417,12 +426,13 @@ makeLinearGradientForAreaChart(chart, idx, width) {
        switch (chart.type) {
          case 'area':
             chartData = makeAreaChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
+            linGrads.push(this.makeLinearGradientForAreaChart(chart, idx, chartData.width));
             // Max assumes chart doesn't shrink subsequently. If that is the case,weneed to
             // recomputmax for all!!
             this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             // this.maxScroll = chartData.maxScroll;
             charts.push(<Path key={idx} d={chartData.path}
-              fill={this.makeLinearGradientForAreaChart(chart, idx, chartData.width)}
+              fill="url(#grad)"
             />);
             if (chart.hideLine) {
               break;
@@ -446,7 +456,8 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   key={idx + 10000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
-                  strokeWidth={3} />);
+                  strokeWidth={3}
+                  fill="transparent" />);
             // Make marker coords:
             markerCords = this.makeMarkersCoords(chart, width, this.state.t);
             chart.markerCords = markerCords;
@@ -459,7 +470,8 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   key={idx + 10000} 
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
-                  strokeWidth={3} />);
+                  strokeWidth={3}
+                  fill="transparent" />);
             break;
           case 'spline-area':
             chartData = makeSplineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen, true);
@@ -485,6 +497,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   d={chartData.path}
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
                   strokeWidth={3}
+                  fill="transparent"
                    />);
             // Make marker coords:
             if (makeMarkers) {
@@ -523,7 +536,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             chart.barCords = chartData.barCords;
             chartData.path.forEach((d, idx2) => {
               let isActive = idx === this.state.activeMarker.chartIdx && d.pointIdx === this.state.activeMarker.pointIdx;
-              charts.push(<Group key={idx2 + 290000} opacity={isActive ? 1 : .75}>
+              charts.push(<G key={idx2 + 290000} opacity={isActive ? 1 : .75}>
                 <Path 
                   d={d.main}
                   fill={d.mainColor}
@@ -539,7 +552,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   fill={d.topColor}
                   stroke={complement(d.topColor)}
                   strokeWidth={isActive ? 5 : 0} />
-                  </Group>
+                  </G>
                   );
             });
             
