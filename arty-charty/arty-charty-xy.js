@@ -1,13 +1,8 @@
 import React, {Component} from 'react';
 import {
-  Alert,
-  Animated,
   Dimensions,
-  Image,
   Responder,
-  View,
-  TouchableOpacity,
-  Easing
+  View
 } from 'react-native';
 import Svg,{
     Defs,
@@ -41,7 +36,7 @@ class ArtyChartyXY extends Component {
    this._makeYaxis();
    if (this.props.animated) {
      this.animateChartTweener = new Tweener(CHART_GROW_ANIMATION_DURATION, t => {
-        this.setState(Object.assign(this.state, {t}));
+        this.setState({t});
     }, this.spring.interpolate.bind(this.spring), false);
    }
    this._initPanHandler();
@@ -115,9 +110,9 @@ class ArtyChartyXY extends Component {
       onResponderRelease: (evt) => {
         this.props.data.some((d, idx) => {
             if (Math.sqrt(Math.pow((d.x * this.widthScaler + CHART_PADDING + Y_AXIS_WIDTH) - evt.nativeEvent.locationX, 2) + Math.pow(((this.minMaxs.maxValueY - d.y) * this.heightScaler + CHART_PADDING) - evt.nativeEvent.locationY, 2) < d.value * this.heightScaler)) {
-            this.setState(Object.assign(this.state, {
+            this.setState({
               clickedPointIdx: idx
-            }));
+            });
             if (this.props.onPointClick) {
                 this.props.onPointClick(idx);
             }

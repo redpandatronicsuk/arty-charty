@@ -1,15 +1,6 @@
 import React, {Component} from 'react';
 import {
-  Alert,
-  Animated,
-  Dimensions,
-  Image,
-  Responder,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Easing
+  View
 } from 'react-native';
 import Svg,{
     Defs,

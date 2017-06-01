@@ -1,14 +1,8 @@
 import React, {Component} from 'react';
 import {
-  Alert,
   Animated,
-  Dimensions,
-  Image,
   Responder,
-  StyleSheet,
-  Text,
   View,
-  TouchableOpacity,
   Easing
 } from 'react-native';
 import Svg,{
@@ -60,7 +54,7 @@ class ArtyChartyDonut extends Component {
       });
     });
     this.animateChartTweener = new Tweener(CHART_GROW_ANIMATION_DURATION, t => {
-        this.setState(Object.assign(this.state, {t}));
+        this.setState({t});
     }, EasingFunctions.bounce, false);
   }
 
@@ -140,9 +134,9 @@ class ArtyChartyDonut extends Component {
             return true;
           }
         });
-        this.setState(Object.assign(this.state, {
+        this.setState({
           selectedSlice: clickedSlice
-        }));
+        });
         if (this.props.onSliceClick) {
           this.props.onSliceClick(this.slices[clickedSlice].dataSetIdx, this.slices[clickedSlice].pointIdx);
         }
@@ -184,8 +178,5 @@ class ArtyChartyDonut extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-});
 
 export default ArtyChartyDonut;

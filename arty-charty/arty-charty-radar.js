@@ -1,14 +1,8 @@
 import React, {Component} from 'react';
 import {
-  Alert,
-  Animated,
   Dimensions,
-  Image,
   Responder,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Easing
+  View
 } from 'react-native';
 import Svg,{
     Defs,
@@ -41,7 +35,7 @@ class ArtyChartyRadar extends Component {
     this.axisLabel = this.makeAxisLabel(AXIS_TICKS)
     this.initPanHandler();
     this.animateChartTweener = new Tweener(CHART_GROW_ANIMATION_DURATION, t => {
-        this.setState(Object.assign(this.state, {t}));
+        this.setState({t});
     }, EasingFunctions.easeOutQuint, false);
   }
 
@@ -102,10 +96,10 @@ class ArtyChartyRadar extends Component {
             return true;
           }
         });
-        this.setState(Object.assign(this.state, {
+        this.setState({
           selectedMarker: clickedMarker,
           clickedChart: clickedChart
-        }));
+        });
         if (this.props.onMarkerClick) {
           this.props.onMarkerClick(clickedMarker, clickedChart);
         }

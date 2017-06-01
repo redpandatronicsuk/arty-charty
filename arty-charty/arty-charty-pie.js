@@ -1,13 +1,9 @@
 import React, {Component} from 'react';
 import {
-  Alert,
   Animated,
   Dimensions,
-  Image,
   Responder,
-  Text,
   View,
-  TouchableOpacity,
   Easing
 } from 'react-native';
 import Svg,{
@@ -55,10 +51,10 @@ class ArtyChartyPie extends Component {
       startAngle = endAngle;
     });
     this.animateChartTweener = new Tweener(CHART_GROW_ANIMATION_DURATION, t => {
-        this.setState(Object.assign(this.state, {t}));
+        this.setState({t});
     }, EasingFunctions.bounce, false);
     this.animateActiveSliceTweener = new Tweener(SELECTED_SLICE_ANIMATION_DURATION, t2 => {
-        this.setState(Object.assign(this.state, {t2}));
+        this.setState({t2});
     }, EasingFunctions.linear, false);
   }
 
@@ -116,10 +112,10 @@ class ArtyChartyPie extends Component {
             return true;
           }
         });
-        this.setState(Object.assign(this.state, {
+        this.setState({
           selectedSlice: clickedSlice,
           previousSelectedSlice: this.state.selectedSlice
-        }));
+        });
         this._animateActiveSlice();
         if (this.props.onSliceClick) {
           this.props.onSliceClick(clickedSlice);
