@@ -89,9 +89,9 @@ class ArtyChartyDonut extends Component {
 
   _computeChartData() {
     this.maxR = 0;
-    if (this.props.data.stackInnerRadius && this.props.data.stackouterRadius) {
+    if (this.props.data.stackInnerRadius && this.props.data.stackOutterRadius) {
       let gap = this.props.data.gap || 0;
-      this.strokeWidth = ((this.props.data.stackouterRadius - this.props.data.stackInnerRadius)
+      this.strokeWidth = ((this.props.data.stackOutterRadius - this.props.data.stackInnerRadius)
       / this.props.data.data.length) - gap;
       this.props.data.data.forEach((d, idx) => {
         // Only set radius if not explictly set:
@@ -151,12 +151,12 @@ class ArtyChartyDonut extends Component {
   render() {
     let size = this.maxR;
     let r = size * .5;
-    let donutSlices = 
-    this.slices.map((d, idx) => {
+    let donutSlices = this.slices.map((d, idx) => {
       return <Path key={idx}
           d={makeArc(r, r,this.props.data.data[d.dataSetIdx].r/2 * .9, d.startAngle, d.startAngle + EasingFunctions.bounce(this.state.t) * (d.arcLength-1e-12), false)}
           stroke={this.props.data.data[d.dataSetIdx].data[d.pointIdx].color}
           strokeWidth={this.state.selectedSlice === idx ? this.strokeWidth + 5 : this.strokeWidth/2}
+          fill="transparent"
            />;
     });
     return(
