@@ -1,21 +1,17 @@
 import React, {Component} from 'react';
 import {
-  Alert,
-  Animated,
   Dimensions,
-  Image,
   PanResponder,
   StyleSheet,
-  Text,
-  View,
-  TouchableOpacity
+  View
 } from 'react-native';
 import Svg,{
     Defs,
     G,
     LinearGradient,
     Path,
-    Stop
+    Stop,
+    Text
 } from 'react-native-svg';
 import {complement, Tweener, AmimatedCirclesMarker, makeBars3DChartPath, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, getMaxSumStack, getMaxSumBars3d, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath, makeStackedBarsChartPath} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
@@ -44,12 +40,9 @@ const CHART_HEIGHT_OFFSET = CHART_HEIGHT / 2;
 const DEFAULT_LINE_COLOR = 'rgba(255,255,255,.5)';
 
 class ArtyCharty extends Component {
+
   constructor(props) {
     super(props);
-    this.resetState();
-  }
-
-  resetState () {
     this.state = {
       trX: 0,
       t: this.props.animated ? 0 : 1,
@@ -62,6 +55,23 @@ class ArtyCharty extends Component {
         r: 0
       }
     };
+    this.maxScroll = 0;
+    this.stopAnimateClickFeedback = false;
+  }
+
+  resetState () {
+    this.setState({
+      trX: 0,
+      t: this.props.animated ? 0 : 1,
+      gradientStops: {},
+      activeMarker: {},
+      clickFeedback: {
+        x: 0,
+        y: 0,
+        o: 0,
+        r: 0
+      }
+    })
     this.maxScroll = 0;
     this.stopAnimateClickFeedback = false;
   }
@@ -86,12 +96,11 @@ class ArtyCharty extends Component {
 
     if (this.props.clickFeedback) {
       this.animateClickFeedbackTweener = new Tweener(CLICK_FEDDBACK_ANIMATION_DURATION, t => {
-            this.setState(Object.assign(this.state, 
-                Object.assign(this.state.clickFeedback, {
+            this.setState(Object.assign(this.state.clickFeedback, {
                   o: 1 - t,
                   r: 100 * t
                 })
-          ));
+          );
       }, EasingFunctions.easeOutCubic, false);
     }
     
@@ -141,7 +150,7 @@ class ArtyCharty extends Component {
     this.animateChartSpring = new Spring({friction: 150, frequency: 500});
     this.animateChartSpring2 = new Spring({friction: 150, frequency: 550, anticipationSize: 50});
     this.animateChartTweener = new Tweener(CHART_GROW_ANIMATION_DURATION, t => {
-          this.setState(Object.assign(this.state, {t}));
+          this.setState({t});
     }, EasingFunctions.linear, false);
 
     let ts = [];
@@ -204,9 +213,9 @@ class ArtyCharty extends Component {
         moved = false;
       },
       onPanResponderMove: this.props.noScroll ? ()=>{} : (evt, gestureState) => {
-        this.setState(Object.assign(this.state, {
+        this.setState({
           trX: Math.min(20, Math.max(sX + gestureState.dx, -this.maxScroll - 20))
-        }));
+        });
         moved = true;
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
@@ -280,7 +289,7 @@ componentWillReceiveProps(nextProps) {
 
   onMarkerClick(chartIdx, pointIdx) {
     if (chartIdx !== this.state.activeMarker.chartIdx || pointIdx !== this.state.activeMarker.pointIdx) {
-        this.setState(Object.assign(this.state, {activeMarker: {chartIdx, pointIdx}}));
+        this.setState({activeMarker: {chartIdx, pointIdx}});
         if (this.props.onMarkerClick) {
           this.props.onMarkerClick(chartIdx, pointIdx);
         }
@@ -384,7 +393,7 @@ makeYaxis(num, minVal, maxVal) {
   let lines = [];
   for (i = 0 ; i <= num; i++) {
     lines.push(<Path key={i} strokeDash={[0, 0, 4, 6]} stroke="black" strokeWidth={.5}  d={`M 0 ${topY + interval * i} H ${width}`} />);
-    lines.push(<SVG.Text key={1000+i} fill="black" stroke="white" strokeWidth={1} x={0} y={(topY + interval * i) - 22} font="20px Arial">{lineVal.toFixed(2)}</SVG.Text>);
+    lines.push(<Text key={1000+i} fill="black" stroke="white" strokeWidth={1} x={0} y={(topY + interval * i) - 22} fontSize="20" fontFamily="Arial">{lineVal.toFixed(2)}</Text>);
     lineVal -= lineDecrement;
   }
   return lines;
@@ -396,14 +405,14 @@ animateChart(endTime) {
 
 animateClickFeedback(x, y) {
   this.animateClickFeedbackTweener.stop();
-  this.setState(Object.assign(this.state, {
+  this.setState({
       clickFeedback: {
         x: x,
         y: y,
         o: 0,
         r: 0
       }
-  }));
+  });
   this.animateClickFeedbackTweener.resetAndPlay();
 }
 
@@ -586,7 +595,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
           <Defs>
             {linGrads}
           </Defs>
-          <Path d={makeCircle(this.state.clickFeedback.x, this.state.clickFeedback.y, this.state.clickFeedback.r)} fill={`rgba(255,255,255, ${this.state.clickFeedback.o})`} />
+          <Path d={makeCircle(this.state.clickFeedback.x, this.state.clickFeedback.y, this.state.clickFeedback.r)} fill={`rgba(255,255,255, ${this.state.clickFeedback.o.toFixed(3)})`} />
         </Svg>
         </View>
         <View {...this._panResponder.panHandlers} style={styles.axesContainer}>
