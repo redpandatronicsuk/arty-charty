@@ -1,4 +1,6 @@
 # ARTy Charty
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/redpandatronicsuk/arty-charty.svg)](https://greenkeeper.io/)
 React Native plugin for rendering charts that used to use ART, but now switched to [react-native-svg](https://github.com/react-native-community/react-native-svg)
 
 ## About
